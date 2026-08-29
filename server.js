@@ -33,6 +33,11 @@ app.get(["/", "/admin"], (req, res) => {
   res.sendFile(path.join(__dirname, "public", "index.html"));
 });
 
+// Pagina agenda per visualizzare gli appuntamenti
+app.get("/agenda", (req, res) => {
+  res.sendFile(path.join(__dirname, "public", "agenda.html"));
+});
+
 app.listen(PORT, () => {
   console.log(`Server avviato su porta ${PORT}`);
   console.log(`Webhook WhatsApp: POST /webhook/whatsapp`);

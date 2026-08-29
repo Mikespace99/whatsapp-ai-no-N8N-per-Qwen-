@@ -36,7 +36,8 @@
     letter-spacing:-0.01em;
   }
   .mono{font-family:'IBM Plex Mono',monospace;}
-  a{color:inherit;}
+  a{color:inherit; text-decoration:none;}
+  a:hover{color:var(--primary);}
 
   /* --- Gate (login) --- */
   #gate{
@@ -243,7 +244,8 @@
       <span class="eyebrow">Studio</span>
       <h1 id="brandName">Console prenotazioni</h1>
     </div>
-    <div style="display:flex; align-items:center;">
+    <div style="display:flex; align-items:center; gap:16px;">
+      <a href="/agenda" style="text-decoration:none; color:var(--muted); font-size:13px; font-weight:500;">Agenda</a>
       <span id="saveStatus">Salvato ✓</span>
       <button id="saveBtn" onclick="saveConfig()">Salva modifiche</button>
     </div>
