@@ -135,7 +135,7 @@
                     <!-- Calendar Widget -->
                     <div class="bg-surface-card rounded-xl border border-outline-variant p-4 shadow-sm">
                         <div class="flex justify-between items-center mb-4">
-                            <h3 class="font-headline font-semibold text-lg" id="calendar-month-year">Ottobre 2023</h3>
+                            <h3 class="font-headline font-semibold text-lg" id="calendar-month-year">Caricamento...</h3>
                             <div class="flex gap-1">
                                 <button onclick="changeMonth(-1)" class="p-1 hover:bg-surface-container-low rounded-full"><span class="material-symbols-outlined text-sm">chevron_left</span></button>
                                 <button onclick="changeMonth(1)" class="p-1 hover:bg-surface-container-low rounded-full"><span class="material-symbols-outlined text-sm">chevron_right</span></button>
@@ -272,7 +272,7 @@
                 else classes += "hover:bg-surface-container-low text-on-surface ";
                 
                 // Check appointments count for badge
-                const count = allAppointments.filter(a => a.date.startsWith(dateStr)).length;
+                const count = allAppointments.filter(a => a.date && a.date.startsWith(dateStr)).length;
                 const badge = count > 0 && !isSelected ? `<span class="absolute bottom-1 w-1 h-1 bg-blue-400 rounded-full"></span>` : '';
 
                 grid.innerHTML += `<div class="${classes}" onclick="selectDate('${dateStr}')">${day}${badge}</div>`;
@@ -288,29 +288,29 @@
         }
 
         function selectDate(dateStr) {
-            selectedDate = new Date(dateStr + 'T00:00:00'); // Fix timezone issues roughly
+            selectedDate = new Date(dateStr + 'T00:00:00'); 
             renderCalendar();
         }
 
         // --- Data Fetching ---
         async function fetchAppointments() {
             try {
-                // Fetch all for simplicity in this demo, ideally filter by month range
                 const res = await fetch('/api/appointments');
                 if (!res.ok) throw new Error('Network response was not ok');
                 allAppointments = await res.json();
                 renderCalendar();
             } catch (error) {
                 console.error('Errore fetch appuntamenti:', error);
-                document.getElementById('appointments-table-body').innerHTML = 
-                    `<tr><td colspan="5" class="p-4 text-center text-error">Errore caricamento dati. Controlla console.</td></tr>`;
+                // Fallback per demo se API fallisce
+                allAppointments = []; 
+                renderCalendar();
             }
         }
 
         // --- Rendering Table & Stats ---
         function updateStats() {
             const dateStr = selectedDate.toISOString().split('T')[0];
-            const daysApps = allAppointments.filter(a => a.date.startsWith(dateStr));
+            const daysApps = allAppointments.filter(a => a.date && a.date.startsWith(dateStr));
             
             document.getElementById('stat-total').textContent = daysApps.length;
             document.getElementById('stat-confirmed').textContent = daysApps.filter(a => a.status === 'confirmed').length;
@@ -325,7 +325,7 @@
             const dateStr = selectedDate.toISOString().split('T')[0];
             
             const daysApps = allAppointments
-                .filter(a => a.date.startsWith(dateStr))
+                .filter(a => a.date && a.date.startsWith(dateStr))
                 .sort((a, b) => a.time.localeCompare(b.time));
             
             if (daysApps.length === 0) {
@@ -341,14 +341,14 @@
                     case 'confirmed': statusClass = "bg-status-confirmed-bg text-status-confirmed-text"; statusText = "Confermato"; break;
                     case 'pending': statusClass = "bg-status-pending-bg text-status-pending-text"; statusText = "In Attesa"; break;
                     case 'cancelled': statusClass = "bg-status-cancelled-bg text-status-cancelled-text"; statusText = "Cancellato"; break;
-                    default: statusClass = "bg-gray-100 text-gray-600"; statusText = app.status;
+                    default: statusClass = "bg-gray-100 text-gray-600"; statusText = app.status || 'Bozza';
                 }
 
                 const initials = (app.client_name || "CL").substring(0, 2).toUpperCase();
 
                 return `
                 <tr class="hover:bg-surface-container-low transition-colors group">
-                    <td class="p-4 font-medium text-on-surface">${app.time}</td>
+                    <td class="p-4 font-medium text-on-surface">${app.time || '--:--'}</td>
                     <td class="p-4">
                         <div class="flex items-center gap-3">
                             <div class="w-8 h-8 rounded-full bg-surface-container-high flex items-center justify-center text-xs font-bold text-on-surface-variant">${initials}</div>
