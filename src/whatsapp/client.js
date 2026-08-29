@@ -15,7 +15,7 @@ function apiUrl() {
  * internazionale, senza "+").
  */
 async function sendWhatsAppMessage(to, body) {
-  const token = process.env.WHATSAPP_TOKEN;
+  const token = process.env.WHATSAPP_ACCESS_TOKEN;
   const phoneNumberId = process.env.WHATSAPP_PHONE_NUMBER_ID;
 
   if (!token || !phoneNumberId) {
