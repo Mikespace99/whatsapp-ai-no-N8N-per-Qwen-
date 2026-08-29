@@ -1,433 +1,376 @@
 <!DOCTYPE html>
 <html lang="it">
 <head>
-    <meta charset="utf-8"/>
-    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-    <title>AI Booking - Dashboard</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - AI Booking</title>
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Manrope:wght@600;700&amp;display=swap" rel="stylesheet"/>
-    <script id="tailwind-config">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Manrope:wght@600;700&display=swap" rel="stylesheet"/>
+    <script>
         tailwind.config = {
             darkMode: "class",
             theme: {
                 extend: {
-                    "colors": {
+                    colors: {
+                        "surface-page": "#f9fafb",
+                        "primary": "#006194",
+                        "on-primary": "#ffffff",
+                        "secondary-container": "#39b8fd",
+                        "on-secondary-container": "#004666",
+                        "surface-card": "#ffffff",
+                        "outline-variant": "#e5e7eb",
+                        "on-surface": "#151c27",
+                        "on-surface-variant": "#3f4850",
+                        "surface-container-low": "#f0f3ff",
+                        "surface-container-high": "#e2e8f8",
+                        "error": "#ba1a1a",
+                        "status-confirmed-bg": "#f0fdf4",
+                        "status-confirmed-text": "#16a34a",
                         "status-pending-bg": "#fffbeb",
                         "status-pending-text": "#b45309",
-                        "background": "#f9f9ff",
-                        "on-secondary-fixed-variant": "#004c6e",
-                        "status-cancelled-text": "#b91c1c",
-                        "surface-bright": "#f9f9ff",
-                        "error": "#ba1a1a",
-                        "surface-dim": "#d3daea",
-                        "on-tertiary-fixed": "#001d32",
-                        "on-primary-fixed": "#001d31",
-                        "primary-fixed-dim": "#93ccff",
-                        "secondary-container": "#39b8fd",
-                        "tertiary-fixed-dim": "#94ccff",
-                        "on-primary-fixed-variant": "#004b73",
-                        "surface-container": "#e7eefe",
-                        "primary-container": "#007bb9",
-                        "error-container": "#ffdad6",
-                        "on-surface-variant": "#3f4850",
-                        "on-tertiary": "#ffffff",
-                        "surface-container-high": "#e2e8f8",
-                        "surface-container-highest": "#dce2f3",
-                        "secondary-fixed": "#c9e6ff",
-                        "on-error-container": "#93000a",
-                        "border-subtle": "#e5e7eb",
-                        "surface": "#f9f9ff",
-                        "on-secondary": "#ffffff",
-                        "primary-fixed": "#cce5ff",
                         "status-cancelled-bg": "#fef2f2",
-                        "outline-variant": "#bfc7d2",
-                        "border-interactive": "#d1d5db",
-                        "on-tertiary-container": "#fdfcff",
-                        "secondary-fixed-dim": "#89ceff",
-                        "on-secondary-fixed": "#001e2f",
-                        "on-error": "#ffffff",
-                        "tertiary-fixed": "#cde5ff",
-                        "surface-card": "#ffffff",
-                        "inverse-primary": "#93ccff",
-                        "tertiary": "#006195",
-                        "outline": "#707881",
-                        "tertiary-container": "#287ab3",
-                        "status-confirmed-bg": "#f0fdf4",
-                        "on-secondary-container": "#004666",
-                        "surface-container-lowest": "#ffffff",
-                        "inverse-on-surface": "#ebf1ff",
-                        "on-background": "#151c27",
-                        "on-primary-container": "#fdfcff",
-                        "surface-page": "#f9fafb",
-                        "on-tertiary-fixed-variant": "#004b74",
-                        "surface-tint": "#006398",
-                        "inverse-surface": "#2a313d",
-                        "on-primary": "#ffffff",
-                        "secondary": "#006591",
-                        "status-confirmed-text": "#16a34a",
-                        "primary": "#006194",
-                        "on-surface": "#151c27",
-                        "surface-container-low": "#f0f3ff",
-                        "surface-variant": "#dce2f3"
+                        "status-cancelled-text": "#b91c1c"
                     },
-                    "borderRadius": {
-                        "DEFAULT": "0.25rem",
-                        "lg": "0.5rem",
-                        "xl": "0.75rem",
-                        "full": "9999px"
-                    },
-                    "spacing": {
-                        "sm": "8px",
-                        "lg": "24px",
-                        "xxl": "48px",
-                        "md": "16px",
-                        "base": "4px",
-                        "xl": "32px",
-                        "xs": "4px",
-                        "gutter": "16px",
-                        "container-max": "1152px"
-                    },
-                    "fontFamily": {
-                        "body-lg": ["Inter"],
-                        "label-md": ["Inter"],
-                        "label-sm": ["Inter"],
-                        "headline-md": ["Manrope"],
-                        "headline-lg": ["Manrope"],
-                        "headline-lg-mobile": ["Manrope"],
-                        "body-md": ["Inter"]
-                    },
-                    "fontSize": {
-                        "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
-                        "label-md": ["14px", {"lineHeight": "20px", "fontWeight": "500"}],
-                        "label-sm": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600"}],
-                        "headline-md": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
-                        "headline-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
-                        "headline-lg-mobile": ["24px", {"lineHeight": "32px", "fontWeight": "700"}],
-                        "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}]
+                    fontFamily: {
+                        body: ["Inter", "sans-serif"],
+                        headline: ["Manrope", "sans-serif"]
                     }
                 }
             }
         }
     </script>
     <style>
+        body { font-family: 'Inter', sans-serif; }
+        h1, h2, h3 { font-family: 'Manrope', sans-serif; }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
         /* Mobile Drawer Transition */
-        #mobile-menu {
-            transition: transform 0.3s ease-in-out;
-        }
-        .menu-open {
-            transform: translateX(0) !important;
-        }
-        .menu-closed {
-            transform: translateX(-100%);
-        }
+        #mobile-drawer { transition: transform 0.3s ease-in-out; }
+        .drawer-open { transform: translateX(0) !important; }
+        .drawer-closed { transform: translateX(-100%) !important; }
     </style>
 </head>
-<body class="bg-surface-page text-on-surface font-body-lg flex min-h-screen overflow-x-hidden">
+<body class="bg-surface-page text-on-surface flex min-h-screen overflow-hidden">
 
-<!-- Mobile Menu Overlay -->
-<div id="overlay" class="fixed inset-0 bg-black/50 z-40 hidden md:hidden glass" onclick="toggleMenu()"></div>
+    <!-- Overlay per mobile -->
+    <div id="overlay" class="fixed inset-0 bg-black/50 z-40 hidden md:hidden glass" onclick="toggleDrawer()"></div>
 
-<!-- Sidebar (Desktop & Mobile) -->
-<aside id="sidebar" class="fixed md:relative z-50 h-screen w-64 flex flex-col border-r border-outline-variant bg-surface-container-lowest p-md gap-base shadow-lg md:shadow-none menu-closed md:transform-none md:translate-x-0">
-    <!-- Logo Header -->
-    <div class="flex items-center justify-between mb-lg px-sm mt-sm">
-        <div class="flex items-center gap-sm">
-            <div class="w-10 h-10 rounded-lg overflow-hidden border border-border-subtle shrink-0 bg-white">
-                <img alt="Logo" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDYHVB-RcwXJEFNtkfaccQrYO_08F910w4Wv7wL6tJT5obvZqOcJBCqDbrvgVcz1_C9DlFEjfry6gt4LJ4-gh96K6iqzMnSOQq-syvVjBOhUnIA_UAj-NXivML_LFanGxPxtx6zjrZuD83T-NDtxFl_vHgT9WE-gmxfagwpq9gfh2KCOygC-_2XqcjtWZbPXemkgV2GKA6ld5xy_FgZI6q35VsZA1mlpzBz1UNvvDWNf8cHcdo4mR7vlg"/>
+    <!-- Sidebar (Desktop & Mobile Drawer) -->
+    <aside id="mobile-drawer" class="fixed md:relative z-50 h-full w-64 bg-white border-r border-outline-variant flex flex-col drawer-closed md:translate-x-0 shadow-xl md:shadow-none">
+        <!-- Logo Area -->
+        <div class="h-16 flex items-center px-6 border-b border-outline-variant">
+            <div class="w-8 h-8 bg-primary rounded-lg flex items-center justify-center text-white mr-3">
+                <span class="material-symbols-outlined text-sm">smart_toy</span>
             </div>
-            <div class="flex flex-col">
-                <span class="font-headline-md text-headline-md font-bold text-primary truncate">AI Booking</span>
-                <span class="font-label-sm text-label-sm text-on-surface-variant truncate">Gestione Studio</span>
-            </div>
-        </div>
-        <!-- Close Button (Mobile Only) -->
-        <button onclick="toggleMenu()" class="md:hidden text-on-surface-variant p-2">
-            <span class="material-symbols-outlined">close</span>
-        </button>
-    </div>
-
-    <!-- Action Button -->
-    <button class="w-full bg-primary text-on-primary hover:bg-surface-tint transition-colors rounded-lg py-sm px-md flex items-center justify-center gap-sm font-label-md shadow-sm active:scale-95 mb-md">
-        <span class="material-symbols-outlined text-[18px]">add</span>
-        Nuovo Appuntamento
-    </button>
-
-    <!-- Navigation -->
-    <nav class="flex-1 flex flex-col gap-xs overflow-y-auto">
-        <a href="/dashboard" class="flex items-center gap-sm px-md py-sm bg-secondary-container text-on-secondary-container rounded-lg font-semibold shadow-sm">
-            <span class="material-symbols-outlined">dashboard</span>
-            Dashboard
-        </a>
-        <a href="/agenda" class="flex items-center gap-sm px-md py-sm text-on-surface-variant hover:bg-surface-container-high rounded-lg transition-colors">
-            <span class="material-symbols-outlined">calendar_month</span>
-            Agenda
-        </a>
-        <a href="#" class="flex items-center gap-sm px-md py-sm text-on-surface-variant hover:bg-surface-container-high rounded-lg transition-colors">
-            <span class="material-symbols-outlined">group</span>
-            Clienti
-        </a>
-        <a href="#" class="flex items-center gap-sm px-md py-sm text-on-surface-variant hover:bg-surface-container-high rounded-lg transition-colors">
-            <span class="material-symbols-outlined">analytics</span>
-            Statistiche
-        </a>
-        <a href="/configurazione" class="flex items-center gap-sm px-md py-sm text-on-surface-variant hover:bg-surface-container-high rounded-lg transition-colors">
-            <span class="material-symbols-outlined">settings</span>
-            Configurazione
-        </a>
-    </nav>
-
-    <!-- Footer Links -->
-    <div class="mt-auto flex flex-col gap-xs pt-md border-t border-border-subtle">
-        <a href="#" class="flex items-center gap-sm px-md py-sm text-on-surface-variant hover:bg-surface-container-high rounded-lg transition-colors">
-            <span class="material-symbols-outlined">help</span>
-            Supporto
-        </a>
-        <a href="/logout" class="flex items-center gap-sm px-md py-sm text-error hover:bg-error-container transition-colors rounded-lg">
-            <span class="material-symbols-outlined">logout</span>
-            Logout
-        </a>
-    </div>
-</aside>
-
-<!-- Main Content Wrapper -->
-<div class="flex-1 flex flex-col w-full md:ml-0 transition-all duration-300">
-    
-    <!-- Mobile TopBar -->
-    <header class="md:hidden flex justify-between items-center px-lg w-full sticky top-0 z-30 h-16 border-b border-outline-variant bg-surface shadow-sm">
-        <div class="flex items-center gap-3">
-            <button onclick="toggleMenu()" class="text-on-surface-variant p-1">
-                <span class="material-symbols-outlined">menu</span>
+            <span class="font-headline font-bold text-lg text-primary">AI Booking</span>
+            <button class="md:hidden ml-auto text-on-surface-variant" onclick="toggleDrawer()">
+                <span class="material-symbols-outlined">close</span>
             </button>
-            <span class="font-headline-md text-headline-md font-bold text-primary truncate">AI Booking</span>
         </div>
-        <div class="w-8 h-8 rounded-full overflow-hidden border border-border-subtle">
-            <img alt="Profilo" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDHA1ZQfGUG8lbxc3K1ZdlT-IL_FqUraZGHYX1jJZ1DqOIq6tsNH9tvSzXuX5CdI38S2RefRdrrX_lj_h3XoqqHEHDtT7rkdHOwYfFZcY7oZWF6OlorpONtKRKHf-Y4xnk63wRGvY5Wgp7dJdNWXpnE9Sj6vdUExcbF4vVG2amHxex1-wgkhPUWV6K-Cy5O_NkdTHYMK5HvdyJq2oI2_kOxCo5PrDbHBUuZ1XHiqZXz4g9DTTmBEddw_g"/>
-        </div>
-    </header>
 
-    <!-- Main Scrollable Area -->
-    <main class="flex-1 p-md md:p-xl overflow-x-hidden flex flex-col gap-lg max-w-[1440px] mx-auto w-full">
-        
-        <!-- Desktop Header -->
-        <header class="hidden md:flex flex-row items-center justify-between gap-md mb-md">
-            <div>
-                <h1 class="font-headline-lg text-headline-lg text-on-background">Benvenuto, Dott. Rossi</h1>
-                <p class="font-body-md text-body-md text-on-surface-variant mt-1">Ecco il riepilogo della tua giornata.</p>
+        <!-- Nav Links -->
+        <nav class="flex-1 p-4 space-y-1 overflow-y-auto">
+            <a href="/dashboard" class="flex items-center gap-3 px-3 py-2.5 bg-surface-container-low text-primary rounded-lg font-medium transition-colors">
+                <span class="material-symbols-outlined">dashboard</span> Dashboard
+            </a>
+            <a href="/agenda" class="flex items-center gap-3 px-3 py-2.5 text-on-surface-variant hover:bg-surface-container-low hover:text-primary rounded-lg font-medium transition-colors">
+                <span class="material-symbols-outlined">calendar_month</span> Agenda
+            </a>
+            <a href="#" class="flex items-center gap-3 px-3 py-2.5 text-on-surface-variant hover:bg-surface-container-low hover:text-primary rounded-lg font-medium transition-colors">
+                <span class="material-symbols-outlined">group</span> Clienti
+            </a>
+            <a href="/statistiche" class="flex items-center gap-3 px-3 py-2.5 text-on-surface-variant hover:bg-surface-container-low hover:text-primary rounded-lg font-medium transition-colors">
+                <span class="material-symbols-outlined">analytics</span> Statistiche
+            </a>
+            <a href="/configurazione" class="flex items-center gap-3 px-3 py-2.5 text-on-surface-variant hover:bg-surface-container-low hover:text-primary rounded-lg font-medium transition-colors">
+                <span class="material-symbols-outlined">settings</span> Configurazione
+            </a>
+        </nav>
+
+        <!-- Footer Nav -->
+        <div class="p-4 border-t border-outline-variant space-y-1">
+            <a href="#" class="flex items-center gap-3 px-3 py-2.5 text-on-surface-variant hover:bg-surface-container-low rounded-lg font-medium">
+                <span class="material-symbols-outlined">help</span> Supporto
+            </a>
+            <a href="/" class="flex items-center gap-3 px-3 py-2.5 text-error hover:bg-red-50 rounded-lg font-medium">
+                <span class="material-symbols-outlined">logout</span> Esci
+            </a>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="flex-1 flex flex-col h-screen overflow-hidden">
+        <!-- Top Header (Mobile Only Trigger + Desktop Info) -->
+        <header class="h-16 bg-white border-b border-outline-variant flex items-center justify-between px-4 md:px-8 shrink-0">
+            <div class="flex items-center gap-4">
+                <button class="md:hidden text-on-surface-variant" onclick="toggleDrawer()">
+                    <span class="material-symbols-outlined">menu</span>
+                </button>
+                <h1 class="font-headline text-xl font-bold text-on-surface hidden md:block">Benvenuto, Dottore</h1>
             </div>
-            <div class="flex items-center gap-md">
-                <button class="w-10 h-10 flex items-center justify-center rounded-full bg-surface-container-lowest border border-border-interactive text-on-surface-variant hover:bg-surface-container-low transition-colors shadow-sm">
-                    <span class="material-symbols-outlined">search</span>
-                </button>
-                <button class="w-10 h-10 flex items-center justify-center rounded-full bg-surface-container-lowest border border-border-interactive text-on-surface-variant hover:bg-surface-container-low transition-colors shadow-sm relative">
-                    <span class="material-symbols-outlined">notifications</span>
-                    <span class="absolute top-2 right-2 w-2 h-2 bg-error rounded-full"></span>
-                </button>
-                <div class="w-10 h-10 rounded-full overflow-hidden border border-border-interactive ml-sm cursor-pointer hover:opacity-90 transition-opacity">
-                    <img alt="Profilo" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDBjLI540-ozGp3habpGmVB1JTMlnInPwRMYlNDKGBpagLeFweC-1uX5JLD5VilQsgG93DjeXA46-BhIwEH7sS1vm6mlV_Mbo14azKSsErIQBAymGvTZem2Xc3yxuJY4UFRwnKsBy77J6X4gLLzKjKw3XDqRlDcyFkNudHdUC_qibYoPkOvLEn3vM0MN73l9igRgO-AgLLhxCntgCdSwXs0pe31h9N-P6H1bejWvV_C_ZpSdDlJMl7cYg"/>
+            <div class="flex items-center gap-4">
+                <div class="text-right hidden sm:block">
+                    <p class="text-sm font-semibold text-on-surface">Dott. Rossi</p>
+                    <p class="text-xs text-on-surface-variant">Specialista</p>
+                </div>
+                <div class="w-10 h-10 rounded-full bg-surface-container-high flex items-center justify-center text-primary font-bold border border-outline-variant">
+                    DR
                 </div>
             </div>
         </header>
 
-        <!-- Content Grid -->
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-md md:gap-lg">
+        <!-- Scrollable Content -->
+        <div class="flex-1 overflow-y-auto p-4 md:p-8">
             
-            <!-- Left Column: Calendar Widget -->
-            <div class="lg:col-span-1 space-y-lg">
-                <aside class="bg-surface-card rounded-xl border border-outline-variant p-lg shadow-sm h-fit">
-                    <div class="flex justify-between items-center mb-md">
-                        <h3 class="font-headline-md text-headline-md text-on-background">Ottobre 2023</h3>
-                        <div class="flex gap-xs">
-                            <button class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-surface-container-low text-on-surface-variant transition-colors">
-                                <span class="material-symbols-outlined text-[20px]">chevron_left</span>
-                            </button>
-                            <button class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-surface-container-low text-on-surface-variant transition-colors">
-                                <span class="material-symbols-outlined text-[20px]">chevron_right</span>
-                            </button>
-                        </div>
-                    </div>
-                    <!-- Mini Calendar Grid -->
-                    <div class="grid grid-cols-7 gap-1 text-center font-label-sm text-label-sm text-on-surface-variant mb-2">
-                        <div>Lun</div><div>Mar</div><div>Mer</div><div>Gio</div><div>Ven</div><div>Sab</div><div>Dom</div>
-                    </div>
-                    <div class="grid grid-cols-7 gap-1 text-center font-body-md text-body-md">
-                        <!-- Simplified Days for Demo -->
-                        <div class="w-8 h-8 flex items-center justify-center mx-auto text-on-surface-variant opacity-40">25</div>
-                        <div class="w-8 h-8 flex items-center justify-center mx-auto text-on-surface-variant opacity-40">26</div>
-                        <div class="w-8 h-8 flex items-center justify-center mx-auto text-on-surface-variant opacity-40">27</div>
-                        <div class="w-8 h-8 flex items-center justify-center mx-auto text-on-surface-variant opacity-40">28</div>
-                        <div class="w-8 h-8 flex items-center justify-center mx-auto text-on-surface-variant opacity-40">29</div>
-                        <div class="w-8 h-8 flex items-center justify-center mx-auto text-on-surface-variant opacity-40">30</div>
-                        
-                        <div class="w-8 h-8 flex items-center justify-center mx-auto rounded-lg hover:bg-surface-container-low cursor-pointer transition-colors">1</div>
-                        <div class="w-8 h-8 flex items-center justify-center mx-auto rounded-lg hover:bg-surface-container-low cursor-pointer transition-colors">2</div>
-                        <div class="w-8 h-8 flex items-center justify-center mx-auto rounded-lg hover:bg-surface-container-low cursor-pointer transition-colors">3</div>
-                        <div class="w-8 h-8 flex items-center justify-center mx-auto rounded-lg hover:bg-surface-container-low cursor-pointer transition-colors">4</div>
-                        <div class="w-8 h-8 flex items-center justify-center mx-auto rounded-lg hover:bg-surface-container-low cursor-pointer transition-colors">5</div>
-                        <div class="w-8 h-8 flex items-center justify-center mx-auto rounded-lg hover:bg-surface-container-low cursor-pointer transition-colors">6</div>
-                        <div class="w-8 h-8 flex items-center justify-center mx-auto rounded-lg hover:bg-surface-container-low cursor-pointer transition-colors relative">
-                            7<span class="absolute bottom-1 w-1 h-1 bg-primary rounded-full"></span>
-                        </div>
-                        
-                        <div class="w-8 h-8 flex items-center justify-center mx-auto rounded-lg bg-surface-container text-primary font-semibold cursor-pointer relative">
-                            8<span class="absolute bottom-1 w-1 h-1 bg-primary rounded-full"></span>
-                        </div>
-                        <div class="w-8 h-8 flex items-center justify-center mx-auto rounded-lg hover:bg-surface-container-low cursor-pointer transition-colors">9</div>
-                        <div class="w-8 h-8 flex items-center justify-center mx-auto rounded-lg bg-primary text-on-primary font-semibold shadow-sm cursor-pointer">10</div>
-                        <div class="w-8 h-8 flex items-center justify-center mx-auto rounded-lg hover:bg-surface-container-low cursor-pointer transition-colors">11</div>
-                        <div class="w-8 h-8 flex items-center justify-center mx-auto rounded-lg hover:bg-surface-container-low cursor-pointer transition-colors">12</div>
-                        <div class="w-8 h-8 flex items-center justify-center mx-auto rounded-lg hover:bg-surface-container-low cursor-pointer transition-colors">13</div>
-                        <div class="w-8 h-8 flex items-center justify-center mx-auto rounded-lg hover:bg-surface-container-low cursor-pointer transition-colors">14</div>
-                        <div class="w-8 h-8 flex items-center justify-center mx-auto rounded-lg hover:bg-surface-container-low cursor-pointer transition-colors">15</div>
-                        <div class="w-8 h-8 flex items-center justify-center mx-auto rounded-lg hover:bg-surface-container-low cursor-pointer transition-colors relative">
-                            16<span class="absolute bottom-1 w-1 h-1 bg-secondary rounded-full"></span>
-                        </div>
-                        <!-- ... rest of days truncated for brevity in prompt context, but fully functional in code ... -->
-                        <div class="w-8 h-8 flex items-center justify-center mx-auto rounded-lg hover:bg-surface-container-low cursor-pointer transition-colors">17</div>
-                        <div class="w-8 h-8 flex items-center justify-center mx-auto rounded-lg hover:bg-surface-container-low cursor-pointer transition-colors">18</div>
-                        <div class="w-8 h-8 flex items-center justify-center mx-auto rounded-lg hover:bg-surface-container-low cursor-pointer transition-colors">19</div>
-                        <div class="w-8 h-8 flex items-center justify-center mx-auto rounded-lg hover:bg-surface-container-low cursor-pointer transition-colors">20</div>
-                        <div class="w-8 h-8 flex items-center justify-center mx-auto rounded-lg hover:bg-surface-container-low cursor-pointer transition-colors">21</div>
-                        <div class="w-8 h-8 flex items-center justify-center mx-auto rounded-lg hover:bg-surface-container-low cursor-pointer transition-colors">22</div>
-                        <div class="w-8 h-8 flex items-center justify-center mx-auto rounded-lg hover:bg-surface-container-low cursor-pointer transition-colors">23</div>
-                        <div class="w-8 h-8 flex items-center justify-center mx-auto rounded-lg hover:bg-surface-container-low cursor-pointer transition-colors">24</div>
-                        <div class="w-8 h-8 flex items-center justify-center mx-auto rounded-lg hover:bg-surface-container-low cursor-pointer transition-colors">25</div>
-                        <div class="w-8 h-8 flex items-center justify-center mx-auto rounded-lg hover:bg-surface-container-low cursor-pointer transition-colors">26</div>
-                        <div class="w-8 h-8 flex items-center justify-center mx-auto rounded-lg hover:bg-surface-container-low cursor-pointer transition-colors">27</div>
-                        <div class="w-8 h-8 flex items-center justify-center mx-auto rounded-lg hover:bg-surface-container-low cursor-pointer transition-colors">28</div>
-                        <div class="w-8 h-8 flex items-center justify-center mx-auto rounded-lg hover:bg-surface-container-low cursor-pointer transition-colors">29</div>
-                        <div class="w-8 h-8 flex items-center justify-center mx-auto rounded-lg hover:bg-surface-container-low cursor-pointer transition-colors">30</div>
-                        <div class="w-8 h-8 flex items-center justify-center mx-auto rounded-lg hover:bg-surface-container-low cursor-pointer transition-colors">31</div>
-                    </div>
-                    
-                    <div class="mt-md pt-md border-t border-border-subtle flex flex-col gap-sm">
-                        <div class="flex items-center gap-sm">
-                            <span class="w-2 h-2 rounded-full bg-primary"></span>
-                            <span class="font-label-sm text-label-sm text-on-surface-variant">Oggi (8 Ottobre)</span>
-                        </div>
-                        <div class="flex items-center gap-sm">
-                            <span class="w-2 h-2 rounded-full bg-secondary"></span>
-                            <span class="font-label-sm text-label-sm text-on-surface-variant">Congresso Medico</span>
-                        </div>
-                    </div>
-                </aside>
+            <!-- Mobile Title -->
+            <div class="md:hidden mb-6">
+                <h1 class="font-headline text-2xl font-bold text-on-surface">Benvenuto, Dottore</h1>
+                <p class="text-on-surface-variant mt-1">Panoramica attività di oggi.</p>
+            </div>
 
-                <!-- Stats Card Placeholder -->
-                <div class="bg-surface-card rounded-xl border border-outline-variant p-lg shadow-sm">
-                    <h3 class="font-headline-md text-headline-md text-on-background mb-4">Statistiche Rapide</h3>
-                    <div class="grid grid-cols-2 gap-4">
-                        <div class="bg-surface-container-low p-4 rounded-lg text-center">
-                            <div class="text-2xl font-bold text-primary">12</div>
-                            <div class="text-xs text-on-surface-variant uppercase tracking-wide">Appuntamenti</div>
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                
+                <!-- Left Column: Calendar & Stats -->
+                <div class="lg:col-span-1 space-y-6">
+                    <!-- Calendar Widget -->
+                    <div class="bg-surface-card rounded-xl border border-outline-variant p-4 shadow-sm">
+                        <div class="flex justify-between items-center mb-4">
+                            <h3 class="font-headline font-semibold text-lg" id="calendar-month-year">Ottobre 2023</h3>
+                            <div class="flex gap-1">
+                                <button onclick="changeMonth(-1)" class="p-1 hover:bg-surface-container-low rounded-full"><span class="material-symbols-outlined text-sm">chevron_left</span></button>
+                                <button onclick="changeMonth(1)" class="p-1 hover:bg-surface-container-low rounded-full"><span class="material-symbols-outlined text-sm">chevron_right</span></button>
+                            </div>
                         </div>
-                        <div class="bg-surface-container-low p-4 rounded-lg text-center">
-                            <div class="text-2xl font-bold text-secondary">95%</div>
-                            <div class="text-xs text-on-surface-variant uppercase tracking-wide">Occupazione</div>
+                        
+                        <!-- Days Header -->
+                        <div class="grid grid-cols-7 text-center text-xs font-medium text-on-surface-variant mb-2">
+                            <div>Lun</div><div>Mar</div><div>Mer</div><div>Gio</div><div>Ven</div><div>Sab</div><div>Dom</div>
+                        </div>
+                        
+                        <!-- Days Grid -->
+                        <div id="calendar-grid" class="grid grid-cols-7 gap-1 text-center text-sm">
+                            <!-- Generated by JS -->
+                        </div>
+
+                        <div class="mt-4 pt-4 border-t border-outline-variant">
+                            <div class="flex items-center gap-2 text-xs text-on-surface-variant">
+                                <span class="w-2 h-2 rounded-full bg-primary"></span> Oggi
+                                <span class="w-2 h-2 rounded-full bg-blue-200 ml-2"></span> Appuntamenti
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Quick Stats -->
+                    <div class="bg-surface-card rounded-xl border border-outline-variant p-4 shadow-sm">
+                        <h3 class="font-headline font-semibold text-lg mb-4">Riepilogo Giorno</h3>
+                        <div class="space-y-3">
+                            <div class="flex justify-between items-center">
+                                <span class="text-on-surface-variant text-sm">Appuntamenti Totali</span>
+                                <span class="font-bold text-lg" id="stat-total">-</span>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <span class="text-on-surface-variant text-sm">Confermati</span>
+                                <span class="font-bold text-status-confirmed-text" id="stat-confirmed">-</span>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <span class="text-on-surface-variant text-sm">In Attesa</span>
+                                <span class="font-bold text-status-pending-text" id="stat-pending">-</span>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
 
-            <!-- Right Column: Appointments List -->
-            <div class="lg:col-span-2">
-                <section class="bg-surface-card rounded-xl border border-outline-variant shadow-sm overflow-hidden flex flex-col h-full">
-                    <div class="p-lg border-b border-border-subtle flex justify-between items-center bg-surface-container-lowest">
-                        <h3 class="font-headline-md text-headline-md text-on-background">Appuntamenti Oggi</h3>
-                        <button class="text-primary font-label-md text-label-md hover:underline flex items-center gap-xs">
-                            Vedi tutti <span class="material-symbols-outlined text-[16px]">arrow_forward</span>
+                <!-- Right Column: Appointments List -->
+                <div class="lg:col-span-2 bg-surface-card rounded-xl border border-outline-variant shadow-sm flex flex-col h-full">
+                    <div class="p-4 border-b border-outline-variant flex justify-between items-center">
+                        <h3 class="font-headline font-semibold text-lg">Appuntamenti del <span id="selected-date-label">...</span></h3>
+                        <button class="text-primary text-sm font-medium hover:underline flex items-center gap-1">
+                            Vedi tutti <span class="material-symbols-outlined text-xs">arrow_forward</span>
                         </button>
                     </div>
+                    
                     <div class="overflow-x-auto flex-1">
                         <table class="w-full text-left border-collapse">
-                            <thead>
-                                <tr class="bg-surface-page border-b border-border-subtle font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">
-                                    <th class="p-md font-semibold">Orario</th>
-                                    <th class="p-md font-semibold">Cliente</th>
-                                    <th class="p-md font-semibold">Servizio</th>
-                                    <th class="p-md font-semibold text-center">Stato</th>
-                                    <th class="p-md font-semibold text-right">Azioni</th>
+                            <thead class="bg-surface-page text-xs uppercase text-on-surface-variant font-semibold">
+                                <tr>
+                                    <th class="p-4">Orario</th>
+                                    <th class="p-4">Cliente</th>
+                                    <th class="p-4 hidden sm:table-cell">Servizio</th>
+                                    <th class="p-4 text-center">Stato</th>
+                                    <th class="p-4 text-right">Azioni</th>
                                 </tr>
                             </thead>
-                            <tbody class="font-body-md text-body-md text-on-surface">
-                                <tr class="border-b border-border-subtle hover:bg-surface-container-lowest transition-colors group">
-                                    <td class="p-md whitespace-nowrap font-label-md text-label-md">09:00 - 09:45</td>
-                                    <td class="p-md">
-                                        <div class="flex items-center gap-sm">
-                                            <div class="w-8 h-8 rounded-full bg-surface-dim flex items-center justify-center text-on-surface-variant font-label-md text-label-md shrink-0">MR</div>
-                                            <span class="font-medium text-on-background">Mario Rossi</span>
-                                        </div>
-                                    </td>
-                                    <td class="p-md text-on-surface-variant">Visita di Controllo</td>
-                                    <td class="p-md text-center">
-                                        <span class="inline-flex items-center justify-center px-2 py-1 rounded-sm bg-status-confirmed-bg text-status-confirmed-text font-label-sm text-label-sm uppercase">Confermato</span>
-                                    </td>
-                                    <td class="p-md text-right">
-                                        <button class="p-sm text-on-surface-variant hover:text-primary transition-colors opacity-0 group-hover:opacity-100 focus:opacity-100 rounded-lg hover:bg-surface-container-low">
-                                            <span class="material-symbols-outlined text-[20px]">more_vert</span>
-                                        </button>
-                                    </td>
-                                </tr>
-                                <tr class="border-b border-border-subtle hover:bg-surface-container-lowest transition-colors group">
-                                    <td class="p-md whitespace-nowrap font-label-md text-label-md">10:00 - 11:00</td>
-                                    <td class="p-md">
-                                        <div class="flex items-center gap-sm">
-                                            <div class="w-8 h-8 rounded-full bg-surface-dim flex items-center justify-center text-on-surface-variant font-label-md text-label-md shrink-0">LB</div>
-                                            <span class="font-medium text-on-background">Laura Bianchi</span>
-                                        </div>
-                                    </td>
-                                    <td class="p-md text-on-surface-variant">Prima Visita</td>
-                                    <td class="p-md text-center">
-                                        <span class="inline-flex items-center justify-center px-2 py-1 rounded-sm bg-status-pending-bg text-status-pending-text font-label-sm text-label-sm uppercase">In Attesa</span>
-                                    </td>
-                                    <td class="p-md text-right">
-                                        <button class="p-sm text-on-surface-variant hover:text-primary transition-colors opacity-0 group-hover:opacity-100 focus:opacity-100 rounded-lg hover:bg-surface-container-low">
-                                            <span class="material-symbols-outlined text-[20px]">more_vert</span>
-                                        </button>
-                                    </td>
-                                </tr>
-                                <tr class="hover:bg-surface-container-lowest transition-colors group">
-                                    <td class="p-md whitespace-nowrap font-label-md text-label-md">14:00 - 15:00</td>
-                                    <td class="p-md">
-                                        <div class="flex items-center gap-sm">
-                                            <div class="w-8 h-8 rounded-full bg-surface-dim flex items-center justify-center text-on-surface-variant font-label-md text-label-md shrink-0">FR</div>
-                                            <span class="font-medium text-on-background">Francesca Romani</span>
-                                        </div>
-                                    </td>
-                                    <td class="p-md text-on-surface-variant">Consulenza Specialistica</td>
-                                    <td class="p-md text-center">
-                                        <span class="inline-flex items-center justify-center px-2 py-1 rounded-sm bg-status-confirmed-bg text-status-confirmed-text font-label-sm text-label-sm uppercase">Confermato</span>
-                                    </td>
-                                    <td class="p-md text-right">
-                                        <button class="p-sm text-on-surface-variant hover:text-primary transition-colors opacity-0 group-hover:opacity-100 focus:opacity-100 rounded-lg hover:bg-surface-container-low">
-                                            <span class="material-symbols-outlined text-[20px]">more_vert</span>
-                                        </button>
-                                    </td>
+                            <tbody id="appointments-table-body" class="text-sm divide-y divide-outline-variant">
+                                <!-- Rows generated by JS -->
+                                <tr>
+                                    <td colspan="5" class="p-8 text-center text-on-surface-variant">Caricamento appuntamenti...</td>
                                 </tr>
                             </tbody>
                         </table>
                     </div>
-                </section>
+                </div>
+
             </div>
         </div>
     </main>
-</div>
 
-<script>
-    function toggleMenu() {
-        const sidebar = document.getElementById('sidebar');
-        const overlay = document.getElementById('overlay');
-        
-        if (sidebar.classList.contains('menu-closed')) {
-            sidebar.classList.remove('menu-closed');
-            sidebar.classList.add('menu-open');
-            overlay.classList.remove('hidden');
-        } else {
-            sidebar.classList.remove('menu-open');
-            sidebar.classList.add('menu-closed');
-            overlay.classList.add('hidden');
+    <script>
+        // --- State Management ---
+        let currentDate = new Date();
+        let selectedDate = new Date();
+        let allAppointments = [];
+
+        // --- Mobile Drawer Logic ---
+        function toggleDrawer() {
+            const drawer = document.getElementById('mobile-drawer');
+            const overlay = document.getElementById('overlay');
+            
+            if (drawer.classList.contains('drawer-closed')) {
+                drawer.classList.remove('drawer-closed');
+                drawer.classList.add('drawer-open');
+                overlay.classList.remove('hidden');
+            } else {
+                drawer.classList.remove('drawer-open');
+                drawer.classList.add('drawer-closed');
+                overlay.classList.add('hidden');
+            }
         }
-    }
-</script>
 
+        // --- Calendar Logic ---
+        function renderCalendar() {
+            const grid = document.getElementById('calendar-grid');
+            const monthLabel = document.getElementById('calendar-month-year');
+            
+            const year = currentDate.getFullYear();
+            const month = currentDate.getMonth();
+            
+            monthLabel.textContent = new Intl.DateTimeFormat('it-IT', { month: 'long', year: 'numeric' }).format(currentDate);
+            
+            grid.innerHTML = '';
+            
+            // First day of month (0 = Sunday, adjust for Monday start)
+            let firstDay = new Date(year, month, 1).getDay();
+            firstDay = firstDay === 0 ? 6 : firstDay - 1; // Make Monday 0
+            
+            const daysInMonth = new Date(year, month + 1, 0).getDate();
+            const today = new Date();
+            
+            // Empty slots for prev month
+            for (let i = 0; i < firstDay; i++) {
+                grid.innerHTML += `<div class="h-8"></div>`;
+            }
+            
+            // Days
+            for (let day = 1; day <= daysInMonth; day++) {
+                const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+                const isToday = day === today.getDate() && month === today.getMonth() && year === today.getFullYear();
+                const isSelected = dateStr === selectedDate.toISOString().split('T')[0];
+                
+                let classes = "h-8 flex items-center justify-center rounded-lg cursor-pointer transition-colors relative ";
+                if (isSelected) classes += "bg-primary text-white font-bold shadow-md ";
+                else if (isToday) classes += "bg-surface-container-low text-primary font-bold border border-primary ";
+                else classes += "hover:bg-surface-container-low text-on-surface ";
+                
+                // Check appointments count for badge
+                const count = allAppointments.filter(a => a.date.startsWith(dateStr)).length;
+                const badge = count > 0 && !isSelected ? `<span class="absolute bottom-1 w-1 h-1 bg-blue-400 rounded-full"></span>` : '';
+
+                grid.innerHTML += `<div class="${classes}" onclick="selectDate('${dateStr}')">${day}${badge}</div>`;
+            }
+            
+            updateStats();
+            renderTable();
+        }
+
+        function changeMonth(delta) {
+            currentDate.setMonth(currentDate.getMonth() + delta);
+            renderCalendar();
+        }
+
+        function selectDate(dateStr) {
+            selectedDate = new Date(dateStr + 'T00:00:00'); // Fix timezone issues roughly
+            renderCalendar();
+        }
+
+        // --- Data Fetching ---
+        async function fetchAppointments() {
+            try {
+                // Fetch all for simplicity in this demo, ideally filter by month range
+                const res = await fetch('/api/appointments');
+                if (!res.ok) throw new Error('Network response was not ok');
+                allAppointments = await res.json();
+                renderCalendar();
+            } catch (error) {
+                console.error('Errore fetch appuntamenti:', error);
+                document.getElementById('appointments-table-body').innerHTML = 
+                    `<tr><td colspan="5" class="p-4 text-center text-error">Errore caricamento dati. Controlla console.</td></tr>`;
+            }
+        }
+
+        // --- Rendering Table & Stats ---
+        function updateStats() {
+            const dateStr = selectedDate.toISOString().split('T')[0];
+            const daysApps = allAppointments.filter(a => a.date.startsWith(dateStr));
+            
+            document.getElementById('stat-total').textContent = daysApps.length;
+            document.getElementById('stat-confirmed').textContent = daysApps.filter(a => a.status === 'confirmed').length;
+            document.getElementById('stat-pending').textContent = daysApps.filter(a => a.status === 'pending').length;
+            
+            const options = { weekday: 'long', day: 'numeric', month: 'long' };
+            document.getElementById('selected-date-label').textContent = selectedDate.toLocaleDateString('it-IT', options);
+        }
+
+        function renderTable() {
+            const tbody = document.getElementById('appointments-table-body');
+            const dateStr = selectedDate.toISOString().split('T')[0];
+            
+            const daysApps = allAppointments
+                .filter(a => a.date.startsWith(dateStr))
+                .sort((a, b) => a.time.localeCompare(b.time));
+            
+            if (daysApps.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="5" class="p-8 text-center text-on-surface-variant">Nessun appuntamento per questa data.</td></tr>`;
+                return;
+            }
+
+            tbody.innerHTML = daysApps.map(app => {
+                let statusClass = "";
+                let statusText = "";
+                
+                switch(app.status) {
+                    case 'confirmed': statusClass = "bg-status-confirmed-bg text-status-confirmed-text"; statusText = "Confermato"; break;
+                    case 'pending': statusClass = "bg-status-pending-bg text-status-pending-text"; statusText = "In Attesa"; break;
+                    case 'cancelled': statusClass = "bg-status-cancelled-bg text-status-cancelled-text"; statusText = "Cancellato"; break;
+                    default: statusClass = "bg-gray-100 text-gray-600"; statusText = app.status;
+                }
+
+                const initials = (app.client_name || "CL").substring(0, 2).toUpperCase();
+
+                return `
+                <tr class="hover:bg-surface-container-low transition-colors group">
+                    <td class="p-4 font-medium text-on-surface">${app.time}</td>
+                    <td class="p-4">
+                        <div class="flex items-center gap-3">
+                            <div class="w-8 h-8 rounded-full bg-surface-container-high flex items-center justify-center text-xs font-bold text-on-surface-variant">${initials}</div>
+                            <span class="font-medium text-on-surface">${app.client_name || 'Cliente'}</span>
+                        </div>
+                    </td>
+                    <td class="p-4 text-on-surface-variant hidden sm:table-cell">${app.service || '-'}</td>
+                    <td class="p-4 text-center">
+                        <span class="inline-flex items-center px-2 py-1 rounded text-xs font-bold uppercase ${statusClass}">${statusText}</span>
+                    </td>
+                    <td class="p-4 text-right">
+                        <button class="p-2 text-on-surface-variant hover:text-primary hover:bg-surface-container-low rounded-lg opacity-0 group-hover:opacity-100 transition-opacity">
+                            <span class="material-symbols-outlined text-sm">more_vert</span>
+                        </button>
+                    </td>
+                </tr>
+                `;
+            }).join('');
+        }
+
+        // Init
+        fetchAppointments();
+    </script>
 </body>
 </html>
