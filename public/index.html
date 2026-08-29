@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Console Prenotazioni WhatsApp</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#16232F;
+    --paper:#F4F6F5;
+    --card:#FFFFFF;
+    --primary:#4B4FE0;
+    --primary-dark:#3A3DBE;
+    --success:#1E8A72;
+    --alert:#E1544B;
+    --muted:#8B94A0;
+    --line:#DDE3E1;
+    --bubble-bot:#EDEEFB;
+    --bubble-user:#DCF4EC;
+    --radius:14px;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--paper);
+    color:var(--ink);
+    font-family:'Inter',sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  h1,h2,h3{
+    font-family:'Fraunces',serif;
+    font-weight:600;
+    margin:0 0 4px 0;
+    letter-spacing:-0.01em;
+  }
+  .mono{font-family:'IBM Plex Mono',monospace;}
+  a{color:inherit;}
+
+  /* --- Gate (login) --- */
+  #gate{
+    min-height:100vh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    flex-direction:column;
+    gap:18px;
+    padding:24px;
+    text-align:center;
+  }
+  #gate .eyebrow{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:12px;
+    letter-spacing:.12em;
+    text-transform:uppercase;
+    color:var(--muted);
+  }
+  #gate h1{font-size:32px;}
+  #gate input{
+    font-size:16px;
+    padding:12px 14px;
+    border:1px solid var(--line);
+    border-radius:10px;
+    width:280px;
+    font-family:'Inter',sans-serif;
+  }
+  #gate button{
+    background:var(--primary);
+    color:#fff;
+    border:none;
+    padding:12px 20px;
+    border-radius:10px;
+    font-size:15px;
+    font-weight:600;
+    cursor:pointer;
+    transition:background .15s ease;
+  }
+  #gate button:hover{background:var(--primary-dark);}
+  #gate .err{color:var(--alert); font-size:13px; min-height:16px;}
+
+  /* --- App shell --- */
+  #app{display:none;}
+  header.topbar{
+    position:sticky; top:0; z-index:20;
+    display:flex; align-items:center; justify-content:space-between;
+    padding:14px 28px;
+    background:var(--card);
+    border-bottom:1px solid var(--line);
+  }
+  header.topbar .brand{display:flex; align-items:baseline; gap:10px;}
+  header.topbar .brand .eyebrow{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:11px; letter-spacing:.1em; text-transform:uppercase; color:var(--muted);
+  }
+  header.topbar .brand h1{font-size:20px;}
+  #saveBtn{
+    background:var(--primary); color:#fff; border:none;
+    padding:10px 18px; border-radius:10px; font-weight:600; font-size:14px;
+    cursor:pointer;
+  }
+  #saveBtn:hover{background:var(--primary-dark);}
+  #saveStatus{
+    font-family:'IBM Plex Mono',monospace; font-size:12px; color:var(--success);
+    margin-right:14px; opacity:0; transition:opacity .3s ease;
+  }
+  #saveStatus.show{opacity:1;}
+
+  .layout{
+    display:grid;
+    grid-template-columns: 380px 1fr;
+    gap:0;
+    align-items:start;
+  }
+  @media (max-width: 920px){
+    .layout{grid-template-columns:1fr;}
+    .previewCol{order:2; position:static !important;}
+  }
+
+  /* --- Live phone preview (signature element) --- */
+  .previewCol{
+    position:sticky; top:65px;
+    padding:32px 24px;
+    height:calc(100vh - 65px);
+    display:flex; flex-direction:column; align-items:center;
+    background:linear-gradient(180deg, #EEF0FB 0%, var(--paper) 60%);
+    border-right:1px solid var(--line);
+  }
+  .previewCol .label{
+    font-family:'IBM Plex Mono',monospace; font-size:11px; letter-spacing:.1em;
+    text-transform:uppercase; color:var(--muted); margin-bottom:14px;
+  }
+  .phone{
+    width:300px; height:600px; background:#0C1116; border-radius:36px;
+    padding:10px; box-shadow:0 24px 48px -12px rgba(22,35,47,.35);
+  }
+  .phone-screen{
+    width:100%; height:100%; background:#E9EDE6; border-radius:26px; overflow:hidden;
+    display:flex; flex-direction:column;
+  }
+  .phone-head{
+    background:#1E8A72; color:#fff; padding:14px 16px 10px;
+    display:flex; align-items:center; gap:10px;
+    font-size:14px; font-weight:600;
+  }
+  .phone-head .avatar{
+    width:30px;height:30px;border-radius:50%;background:#F4F6F5;
+    display:flex;align-items:center;justify-content:center;color:#1E8A72;font-size:13px;font-weight:700;
+  }
+  .phone-body{
+    flex:1; padding:14px 10px; overflow-y:auto; display:flex; flex-direction:column; gap:8px;
+  }
+  .bubble{
+    max-width:82%; padding:9px 12px; border-radius:14px; font-size:13px; line-height:1.4;
+    white-space:pre-wrap;
+  }
+  .bubble.bot{background:#fff; align-self:flex-start; border-bottom-left-radius:4px; box-shadow:0 1px 1px rgba(0,0,0,.05);}
+  .bubble.user{background:var(--bubble-user); align-self:flex-end; border-bottom-right-radius:4px;}
+  .phone-input{
+    padding:8px 10px; background:#F4F6F5; display:flex; align-items:center;
+  }
+  .phone-input .fake{
+    flex:1; background:#fff; border-radius:16px; padding:8px 12px; font-size:12px; color:var(--muted);
+  }
+
+  /* --- Form column --- */
+  .formCol{padding:32px 40px 120px;}
+  .formCol > p.intro{color:var(--muted); max-width:560px; margin:0 0 28px;}
+  section.card{
+    background:var(--card); border:1px solid var(--line); border-radius:var(--radius);
+    padding:24px 26px; margin-bottom:20px; max-width:720px;
+  }
+  section.card h2{font-size:19px; margin-bottom:2px;}
+  section.card .hint{color:var(--muted); font-size:13px; margin:0 0 16px;}
+  .grid2{display:grid; grid-template-columns:1fr 1fr; gap:14px;}
+  label{
+    display:block; font-size:12px; font-weight:600; color:var(--muted);
+    text-transform:uppercase; letter-spacing:.04em; margin-bottom:6px;
+  }
+  input[type=text], input[type=tel], input[type=number], input[type=date], textarea, select{
+    width:100%; padding:10px 12px; border:1px solid var(--line); border-radius:9px;
+    font-family:'Inter',sans-serif; font-size:14px; background:#fff; color:var(--ink);
+  }
+  input.mono, .configrow input{font-family:'IBM Plex Mono',monospace;}
+  textarea{resize:vertical; min-height:52px;}
+  .field{margin-bottom:14px;}
+  .row{display:flex; gap:12px; align-items:flex-end;}
+  .configgrid{display:grid; grid-template-columns:repeat(4,1fr); gap:14px;}
+  @media (max-width:700px){.configgrid{grid-template-columns:1fr 1fr;} .grid2{grid-template-columns:1fr;}}
+
+  .daysGrid{display:flex; flex-direction:column; gap:10px;}
+  .dayRow{display:flex; align-items:center; gap:12px; padding:8px 0; border-bottom:1px dashed var(--line);}
+  .dayRow:last-child{border-bottom:none;}
+  .dayName{width:46px; font-weight:600; font-size:13px;}
+  .toggle{
+    width:38px; height:22px; border-radius:12px; background:var(--line); position:relative; cursor:pointer; flex:none;
+  }
+  .toggle.on{background:var(--success);}
+  .toggle .knob{
+    position:absolute; top:2px; left:2px; width:18px; height:18px; border-radius:50%; background:#fff;
+    transition:left .15s ease;
+  }
+  .toggle.on .knob{left:18px;}
+  .windows{display:flex; gap:8px; flex-wrap:wrap; flex:1;}
+  .windows input{width:88px; padding:6px 8px; font-size:13px;}
+
+  .servicesList, .exclusionsList{display:flex; flex-direction:column; gap:10px; margin-bottom:12px;}
+  .serviceRow, .exclusionRow{display:flex; gap:10px; align-items:center;}
+  .serviceRow input:first-child{flex:2;}
+  .serviceRow input:nth-child(2){flex:1;}
+  .removeBtn{
+    background:none; border:1px solid var(--line); color:var(--alert); border-radius:8px;
+    width:32px; height:32px; cursor:pointer; flex:none; font-size:16px; line-height:1;
+  }
+  .addBtn{
+    background:none; border:1px dashed var(--muted); color:var(--ink); border-radius:9px;
+    padding:8px 14px; font-size:13px; cursor:pointer;
+  }
+  .addBtn:hover{border-color:var(--primary); color:var(--primary);}
+
+  footer.savebar{
+    position:fixed; bottom:0; left:0; right:0; background:var(--card);
+    border-top:1px solid var(--line); padding:14px 40px; display:flex; justify-content:flex-end; gap:12px; align-items:center;
+    z-index:10;
+  }
+</style>
+</head>
+<body>
+
+<!-- ============ GATE (accesso con password) ============ -->
+<div id="gate">
+  <div class="eyebrow">Console configurazione</div>
+  <h1>Imposta le regole<br/>del tuo assistente WhatsApp</h1>
+  <input id="pwd" type="password" placeholder="Password di accesso" autocomplete="current-password" />
+  <button onclick="tryLogin()">Entra</button>
+  <div class="err" id="gateErr"></div>
+</div>
+
+<!-- ============ APP ============ -->
+<div id="app">
+  <header class="topbar">
+    <div class="brand">
+      <span class="eyebrow">Studio</span>
+      <h1 id="brandName">Console prenotazioni</h1>
+    </div>
+    <div style="display:flex; align-items:center;">
+      <span id="saveStatus">Salvato ✓</span>
+      <button id="saveBtn" onclick="saveConfig()">Salva modifiche</button>
+    </div>
+  </header>
+
+  <div class="layout">
+    <!-- Anteprima live (elemento signature) -->
+    <div class="previewCol">
+      <div class="label">Così risponderà il bot</div>
+      <div class="phone">
+        <div class="phone-screen">
+          <div class="phone-head">
+            <div class="avatar" id="avatarInit">S</div>
+            <div id="phoneTitle">Studio Medico</div>
+          </div>
+          <div class="phone-body" id="phoneBody"></div>
+          <div class="phone-input"><div class="fake">Scrivi un messaggio…</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Form di configurazione -->
+    <div class="formCol">
+      <p class="intro">Questi campi sono le istruzioni che l'assistente WhatsApp legge prima di rispondere ai pazienti: orari, servizi, esclusioni e regole di prenotazione. L'anteprima a sinistra si aggiorna mentre scrivi.</p>
+
+      <section class="card">
+        <h2>Studio</h2>
+        <p class="hint">Informazioni mostrate quando un paziente chiede indicazioni sullo studio.</p>
+        <div class="grid2">
+          <div class="field"><label>Nome studio</label><input type="text" id="s_name" oninput="onEdit()"/></div>
+          <div class="field"><label>Telefono</label><input type="tel" id="s_phone" oninput="onEdit()"/></div>
+        </div>
+        <div class="field"><label>Indirizzo</label><input type="text" id="s_address" oninput="onEdit()"/></div>
+      </section>
+
+      <section class="card">
+        <h2>Regole di prenotazione</h2>
+        <p class="hint">Parametri che governano la ricerca e la proposta degli slot.</p>
+        <div class="configgrid">
+          <div class="field"><label>Giorni ricercabili</label><input class="mono" type="number" id="c_days" min="1" oninput="onEdit()"/></div>
+          <div class="field"><label>Timeout risposta (min)</label><input class="mono" type="number" id="c_timeout" min="1" oninput="onEdit()"/></div>
+          <div class="field"><label>Cicli massimi</label><input class="mono" type="number" id="c_cycles" min="1" oninput="onEdit()"/></div>
+          <div class="field"><label>Slot proposti insieme</label><input class="mono" type="number" id="c_first" min="1" max="10" oninput="onEdit()"/></div>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>Servizi</h2>
+        <p class="hint">Ogni servizio ha una durata: determina la lunghezza degli slot generati.</p>
+        <div class="servicesList" id="servicesList"></div>
+        <button class="addBtn" onclick="addService()">+ Aggiungi servizio</button>
+      </section>
+
+      <section class="card">
+        <h2>Orari di apertura</h2>
+        <p class="hint">Attiva i giorni aperti e indica le fasce orarie (puoi averne più di una per giorno).</p>
+        <div class="daysGrid" id="daysGrid"></div>
+      </section>
+
+      <section class="card">
+        <h2>Esclusioni</h2>
+        <p class="hint">Giornate singole chiuse: ferie, festività, chiusure straordinarie.</p>
+        <div class="exclusionsList" id="exclusionsList"></div>
+        <button class="addBtn" onclick="addExclusion()">+ Aggiungi data</button>
+      </section>
+
+      <section class="card">
+        <h2>Messaggi</h2>
+        <p class="hint">Testi usati dall'assistente. Puoi usare {studio_name}, {studio_phone}, {search_days}, {slot_label}.</p>
+        <div class="field"><label>Benvenuto</label><textarea id="m_welcome" oninput="onEdit()"></textarea></div>
+        <div class="field"><label>Introduzione slot proposti</label><textarea id="m_offer" oninput="onEdit()"></textarea></div>
+        <div class="field"><label>Richiesta di scelta</label><textarea id="m_ask" oninput="onEdit()"></textarea></div>
+        <div class="field"><label>Conferma prenotazione</label><textarea id="m_confirm" oninput="onEdit()"></textarea></div>
+        <div class="field"><label>Nessuno slot disponibile</label><textarea id="m_noslots" oninput="onEdit()"></textarea></div>
+        <div class="field"><label>Oltre il limite prenotabile</label><textarea id="m_limit" oninput="onEdit()"></textarea></div>
+        <div class="field"><label>Richiesta scaduta (timeout)</label><textarea id="m_expired" oninput="onEdit()"></textarea></div>
+      </section>
+    </div>
+  </div>
+
+  <footer class="savebar">
+    <button id="saveBtn2" onclick="saveConfig()" style="background:var(--primary); color:#fff; border:none; padding:12px 22px; border-radius:10px; font-weight:600; cursor:pointer;">Salva modifiche</button>
+  </footer>
+</div>
+
+<script>
+const DAY_KEYS = ["mon","tue","wed","thu","fri","sat","sun"];
+const DAY_LABELS = {mon:"Lun",tue:"Mar",wed:"Mer",thu:"Gio",fri:"Ven",sat:"Sab",sun:"Dom"};
+let config = null;
+let pwd = localStorage.getItem("admin_password") || "";
+
+async function tryLogin(){
+  const val = document.getElementById("pwd").value;
+  const res = await fetch("/api/login", {
+    method:"POST", headers:{"Content-Type":"application/json"},
+    body: JSON.stringify({password: val})
+  });
+  const data = await res.json();
+  if(data.ok){
+    pwd = val;
+    localStorage.setItem("admin_password", val);
+    document.getElementById("gateErr").textContent = "";
+    await loadConfig();
+  } else {
+    document.getElementById("gateErr").textContent = "Password non corretta.";
+  }
+}
+
+async function loadConfig(){
+  const res = await fetch("/api/config", { headers: { "x-admin-password": pwd }});
+  if(res.status === 401){
+    document.getElementById("gate").style.display = "flex";
+    document.getElementById("app").style.display = "none";
+    return;
+  }
+  config = await res.json();
+  document.getElementById("gate").style.display = "none";
+  document.getElementById("app").style.display = "block";
+  render();
+}
+
+function render(){
+  document.getElementById("s_name").value = config.studio.name || "";
+  document.getElementById("s_phone").value = config.studio.phone || "";
+  document.getElementById("s_address").value = config.studio.address || "";
+  document.getElementById("brandName").textContent = config.studio.name || "Console prenotazioni";
+  document.getElementById("phoneTitle").textContent = config.studio.name || "Studio Medico";
+  document.getElementById("avatarInit").textContent = (config.studio.name || "S").trim().charAt(0).toUpperCase();
+
+  document.getElementById("c_days").value = config.booking.search_days;
+  document.getElementById("c_timeout").value = config.booking.reply_timeout_minutes;
+  document.getElementById("c_cycles").value = config.booking.max_cycles;
+  document.getElementById("c_first").value = config.booking.first_offer_slots;
+
+  document.getElementById("m_welcome").value = config.messages.welcome;
+  document.getElementById("m_offer").value = config.messages.offer_intro;
+  document.getElementById("m_ask").value = config.messages.ask_reply;
+  document.getElementById("m_confirm").value = config.messages.confirmation;
+  document.getElementById("m_noslots").value = config.messages.no_slots;
+  document.getElementById("m_limit").value = config.messages.limit_exceeded;
+  document.getElementById("m_expired").value = config.messages.expired;
+
+  renderServices();
+  renderDays();
+  renderExclusions();
+  renderPreview();
+}
+
+function renderServices(){
+  const list = document.getElementById("servicesList");
+  list.innerHTML = "";
+  config.services.forEach((svc, i) => {
+    const row = document.createElement("div");
+    row.className = "serviceRow";
+    row.innerHTML = `
+      <input type="text" value="${escapeAttr(svc.name)}" placeholder="Nome servizio" data-idx="${i}" data-field="name"/>
+      <input class="mono" type="number" value="${svc.duration_minutes}" placeholder="min" data-idx="${i}" data-field="duration_minutes"/>
+      <button class="removeBtn" onclick="removeService(${i})">×</button>
+    `;
+    row.querySelectorAll("input").forEach(inp => inp.addEventListener("input", onServiceEdit));
+    list.appendChild(row);
+  });
+}
+function onServiceEdit(e){
+  const i = +e.target.dataset.idx, field = e.target.dataset.field;
+  config.services[i][field] = field === "duration_minutes" ? (+e.target.value || 0) : e.target.value;
+  onEdit();
+}
+function addService(){
+  config.services.push({ id: "servizio-" + Date.now(), name: "Nuovo servizio", duration_minutes: 30 });
+  renderServices(); onEdit();
+}
+function removeService(i){ config.services.splice(i,1); renderServices(); onEdit(); }
+
+function renderDays(){
+  const grid = document.getElementById("daysGrid");
+  grid.innerHTML = "";
+  DAY_KEYS.forEach(key => {
+    const windows = config.opening_hours[key] || [];
+    const isOpen = windows.length > 0;
+    const row = document.createElement("div");
+    row.className = "dayRow";
+    row.innerHTML = `
+      <div class="dayName">${DAY_LABELS[key]}</div>
+      <div class="toggle ${isOpen ? "on":""}" data-day="${key}"><div class="knob"></div></div>
+      <div class="windows" data-day-windows="${key}"></div>
+    `;
+    row.querySelector(".toggle").addEventListener("click", () => toggleDay(key));
+    grid.appendChild(row);
+    renderWindows(key);
+  });
+}
+function renderWindows(key){
+  const container = document.querySelector(`[data-day-windows="${key}"]`);
+  container.innerHTML = "";
+  const windows = config.opening_hours[key] || [];
+  windows.forEach((w, i) => {
+    const start = document.createElement("input");
+    start.type = "text"; start.value = w.start; start.placeholder = "09:00";
+    start.addEventListener("input", (e)=>{ w.start = e.target.value; onEdit(); });
+    const sep = document.createElement("span"); sep.textContent = "–"; sep.style.color="var(--muted)";
+    const end = document.createElement("input");
+    end.type = "text"; end.value = w.end; end.placeholder = "13:00";
+    end.addEventListener("input", (e)=>{ w.end = e.target.value; onEdit(); });
+    const rm = document.createElement("button");
+    rm.className = "removeBtn"; rm.style.width="26px"; rm.style.height="26px"; rm.style.fontSize="13px";
+    rm.textContent = "×";
+    rm.onclick = () => { windows.splice(i,1); renderWindows(key); onEdit(); };
+    container.appendChild(start); container.appendChild(sep); container.appendChild(end); container.appendChild(rm);
+  });
+  if(windows.length){
+    const add = document.createElement("button");
+    add.className = "addBtn"; add.textContent = "+ fascia";
+    add.onclick = () => { windows.push({start:"09:00", end:"13:00"}); renderWindows(key); onEdit(); };
+    container.appendChild(add);
+  }
+}
+function toggleDay(key){
+  const windows = config.opening_hours[key] || [];
+  if(windows.length){
+    config.opening_hours[key] = [];
+  } else {
+    config.opening_hours[key] = [{start:"09:00", end:"13:00"}];
+  }
+  renderDays(); onEdit();
+}
+
+function renderExclusions(){
+  const list = document.getElementById("exclusionsList");
+  list.innerHTML = "";
+  config.exclusions.dates.forEach((d, i) => {
+    const row = document.createElement("div");
+    row.className = "exclusionRow";
+    row.innerHTML = `<input type="date" value="${d}" data-idx="${i}"/><button class="removeBtn">×</button>`;
+    row.querySelector("input").addEventListener("input", (e)=>{ config.exclusions.dates[i] = e.target.value; onEdit(); });
+    row.querySelector("button").addEventListener("click", ()=>{ config.exclusions.dates.splice(i,1); renderExclusions(); onEdit(); });
+    list.appendChild(row);
+  });
+}
+function addExclusion(){
+  const today = new Date().toISOString().slice(0,10);
+  config.exclusions.dates.push(today);
+  renderExclusions(); onEdit();
+}
+
+function escapeAttr(s){ return String(s || "").replace(/"/g,"&quot;"); }
+function fill(tpl, vars){ return tpl.replace(/\{(\w+)\}/g, (_,k)=> vars[k] ?? ""); }
+
+function firstOpenWindow(){
+  for(const key of DAY_KEYS){
+    const w = config.opening_hours[key];
+    if(w && w.length) return w[0];
+  }
+  return {start:"09:00", end:"10:00"};
+}
+
+function renderPreview(){
+  const vars = { studio_name: config.studio.name, studio_phone: config.studio.phone, search_days: config.booking.search_days };
+  const w = firstOpenWindow();
+  const slotLabel = `lunedì 12/10 alle ${w.start}`;
+  const n = Math.max(1, Math.min(config.booking.first_offer_slots || 3, 5));
+  let slotsText = "";
+  for(let i=1;i<=n;i++){
+    slotsText += `\n${i}. lunedì 12/10 alle ${w.start}`;
+  }
+
+  const bubbles = [
+    { who:"user", text:"Vorrei prenotare per lunedì mattina" },
+    { who:"bot", text: fill(config.messages.welcome, vars) },
+    { who:"bot", text: `${fill(config.messages.offer_intro, vars)}${slotsText}\n\n${fill(config.messages.ask_reply, vars)}` },
+    { who:"user", text:"Va bene la 1" },
+    { who:"bot", text: fill(config.messages.confirmation, {...vars, slot_label: slotLabel}) },
+  ];
+
+  const body = document.getElementById("phoneBody");
+  body.innerHTML = "";
+  bubbles.forEach(b => {
+    const el = document.createElement("div");
+    el.className = "bubble " + (b.who === "bot" ? "bot" : "user");
+    el.textContent = b.text;
+    body.appendChild(el);
+  });
+  body.scrollTop = body.scrollHeight;
+}
+
+function onEdit(){
+  config.studio.name = document.getElementById("s_name").value;
+  config.studio.phone = document.getElementById("s_phone").value;
+  config.studio.address = document.getElementById("s_address").value;
+  document.getElementById("brandName").textContent = config.studio.name || "Console prenotazioni";
+  document.getElementById("phoneTitle").textContent = config.studio.name || "Studio Medico";
+  document.getElementById("avatarInit").textContent = (config.studio.name || "S").trim().charAt(0).toUpperCase();
+
+  config.booking.search_days = +document.getElementById("c_days").value || 30;
+  config.booking.reply_timeout_minutes = +document.getElementById("c_timeout").value || 10;
+  config.booking.max_cycles = +document.getElementById("c_cycles").value || 2;
+  config.booking.first_offer_slots = +document.getElementById("c_first").value || 3;
+
+  config.messages.welcome = document.getElementById("m_welcome").value;
+  config.messages.offer_intro = document.getElementById("m_offer").value;
+  config.messages.ask_reply = document.getElementById("m_ask").value;
+  config.messages.confirmation = document.getElementById("m_confirm").value;
+  config.messages.no_slots = document.getElementById("m_noslots").value;
+  config.messages.limit_exceeded = document.getElementById("m_limit").value;
+  config.messages.expired = document.getElementById("m_expired").value;
+
+  renderPreview();
+}
+
+async function saveConfig(){
+  const res = await fetch("/api/config", {
+    method:"POST",
+    headers:{"Content-Type":"application/json", "x-admin-password": pwd},
+    body: JSON.stringify(config)
+  });
+  const status = document.getElementById("saveStatus");
+  if(res.ok){
+    status.textContent = "Salvato ✓";
+    status.classList.add("show");
+    setTimeout(()=> status.classList.remove("show"), 1800);
+  } else {
+    status.textContent = "Errore nel salvataggio";
+    status.style.color = "var(--alert)";
+    status.classList.add("show");
+  }
+}
+
+if(pwd){ loadConfig(); }
+</script>
+</body>
+</html>
