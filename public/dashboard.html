@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>AI Booking - Dashboard</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Manrope:wght@600;700&amp;display=swap" rel="stylesheet"/>
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "status-pending-bg": "#fffbeb",
+                        "status-pending-text": "#b45309",
+                        "background": "#f9f9ff",
+                        "on-secondary-fixed-variant": "#004c6e",
+                        "status-cancelled-text": "#b91c1c",
+                        "surface-bright": "#f9f9ff",
+                        "error": "#ba1a1a",
+                        "surface-dim": "#d3daea",
+                        "on-tertiary-fixed": "#001d32",
+                        "on-primary-fixed": "#001d31",
+                        "primary-fixed-dim": "#93ccff",
+                        "secondary-container": "#39b8fd",
+                        "tertiary-fixed-dim": "#94ccff",
+                        "on-primary-fixed-variant": "#004b73",
+                        "surface-container": "#e7eefe",
+                        "primary-container": "#007bb9",
+                        "error-container": "#ffdad6",
+                        "on-surface-variant": "#3f4850",
+                        "on-tertiary": "#ffffff",
+                        "surface-container-high": "#e2e8f8",
+                        "surface-container-highest": "#dce2f3",
+                        "secondary-fixed": "#c9e6ff",
+                        "on-error-container": "#93000a",
+                        "border-subtle": "#e5e7eb",
+                        "surface": "#f9f9ff",
+                        "on-secondary": "#ffffff",
+                        "primary-fixed": "#cce5ff",
+                        "status-cancelled-bg": "#fef2f2",
+                        "outline-variant": "#bfc7d2",
+                        "border-interactive": "#d1d5db",
+                        "on-tertiary-container": "#fdfcff",
+                        "secondary-fixed-dim": "#89ceff",
+                        "on-secondary-fixed": "#001e2f",
+                        "on-error": "#ffffff",
+                        "tertiary-fixed": "#cde5ff",
+                        "surface-card": "#ffffff",
+                        "inverse-primary": "#93ccff",
+                        "tertiary": "#006195",
+                        "outline": "#707881",
+                        "tertiary-container": "#287ab3",
+                        "status-confirmed-bg": "#f0fdf4",
+                        "on-secondary-container": "#004666",
+                        "surface-container-lowest": "#ffffff",
+                        "inverse-on-surface": "#ebf1ff",
+                        "on-background": "#151c27",
+                        "on-primary-container": "#fdfcff",
+                        "surface-page": "#f9fafb",
+                        "on-tertiary-fixed-variant": "#004b74",
+                        "surface-tint": "#006398",
+                        "inverse-surface": "#2a313d",
+                        "on-primary": "#ffffff",
+                        "secondary": "#006591",
+                        "status-confirmed-text": "#16a34a",
+                        "primary": "#006194",
+                        "on-surface": "#151c27",
+                        "surface-container-low": "#f0f3ff",
+                        "surface-variant": "#dce2f3"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "sm": "8px",
+                        "lg": "24px",
+                        "xxl": "48px",
+                        "md": "16px",
+                        "base": "4px",
+                        "xl": "32px",
+                        "xs": "4px",
+                        "gutter": "16px",
+                        "container-max": "1152px"
+                    },
+                    "fontFamily": {
+                        "body-lg": ["Inter"],
+                        "label-md": ["Inter"],
+                        "label-sm": ["Inter"],
+                        "headline-md": ["Manrope"],
+                        "headline-lg": ["Manrope"],
+                        "headline-lg-mobile": ["Manrope"],
+                        "body-md": ["Inter"]
+                    },
+                    "fontSize": {
+                        "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                        "label-md": ["14px", {"lineHeight": "20px", "fontWeight": "500"}],
+                        "label-sm": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                        "headline-md": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                        "headline-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                        "headline-lg-mobile": ["24px", {"lineHeight": "32px", "fontWeight": "700"}],
+                        "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}]
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Mobile Drawer Transition */
+        #mobile-menu {
+            transition: transform 0.3s ease-in-out;
+        }
+        .menu-open {
+            transform: translateX(0) !important;
+        }
+        .menu-closed {
+            transform: translateX(-100%);
+        }
+    </style>
+</head>
+<body class="bg-surface-page text-on-surface font-body-lg flex min-h-screen overflow-x-hidden">
+
+<!-- Mobile Menu Overlay -->
+<div id="overlay" class="fixed inset-0 bg-black/50 z-40 hidden md:hidden glass" onclick="toggleMenu()"></div>
+
+<!-- Sidebar (Desktop & Mobile) -->
+<aside id="sidebar" class="fixed md:relative z-50 h-screen w-64 flex flex-col border-r border-outline-variant bg-surface-container-lowest p-md gap-base shadow-lg md:shadow-none menu-closed md:transform-none md:translate-x-0">
+    <!-- Logo Header -->
+    <div class="flex items-center justify-between mb-lg px-sm mt-sm">
+        <div class="flex items-center gap-sm">
+            <div class="w-10 h-10 rounded-lg overflow-hidden border border-border-subtle shrink-0 bg-white">
+                <img alt="Logo" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDYHVB-RcwXJEFNtkfaccQrYO_08F910w4Wv7wL6tJT5obvZqOcJBCqDbrvgVcz1_C9DlFEjfry6gt4LJ4-gh96K6iqzMnSOQq-syvVjBOhUnIA_UAj-NXivML_LFanGxPxtx6zjrZuD83T-NDtxFl_vHgT9WE-gmxfagwpq9gfh2KCOygC-_2XqcjtWZbPXemkgV2GKA6ld5xy_FgZI6q35VsZA1mlpzBz1UNvvDWNf8cHcdo4mR7vlg"/>
+            </div>
+            <div class="flex flex-col">
+                <span class="font-headline-md text-headline-md font-bold text-primary truncate">AI Booking</span>
+                <span class="font-label-sm text-label-sm text-on-surface-variant truncate">Gestione Studio</span>
+            </div>
+        </div>
+        <!-- Close Button (Mobile Only) -->
+        <button onclick="toggleMenu()" class="md:hidden text-on-surface-variant p-2">
+            <span class="material-symbols-outlined">close</span>
+        </button>
+    </div>
+
+    <!-- Action Button -->
+    <button class="w-full bg-primary text-on-primary hover:bg-surface-tint transition-colors rounded-lg py-sm px-md flex items-center justify-center gap-sm font-label-md shadow-sm active:scale-95 mb-md">
+        <span class="material-symbols-outlined text-[18px]">add</span>
+        Nuovo Appuntamento
+    </button>
+
+    <!-- Navigation -->
+    <nav class="flex-1 flex flex-col gap-xs overflow-y-auto">
+        <a href="/dashboard" class="flex items-center gap-sm px-md py-sm bg-secondary-container text-on-secondary-container rounded-lg font-semibold shadow-sm">
+            <span class="material-symbols-outlined">dashboard</span>
+            Dashboard
+        </a>
+        <a href="/agenda" class="flex items-center gap-sm px-md py-sm text-on-surface-variant hover:bg-surface-container-high rounded-lg transition-colors">
+            <span class="material-symbols-outlined">calendar_month</span>
+            Agenda
+        </a>
+        <a href="#" class="flex items-center gap-sm px-md py-sm text-on-surface-variant hover:bg-surface-container-high rounded-lg transition-colors">
+            <span class="material-symbols-outlined">group</span>
+            Clienti
+        </a>
+        <a href="#" class="flex items-center gap-sm px-md py-sm text-on-surface-variant hover:bg-surface-container-high rounded-lg transition-colors">
+            <span class="material-symbols-outlined">analytics</span>
+            Statistiche
+        </a>
+        <a href="/configurazione" class="flex items-center gap-sm px-md py-sm text-on-surface-variant hover:bg-surface-container-high rounded-lg transition-colors">
+            <span class="material-symbols-outlined">settings</span>
+            Configurazione
+        </a>
+    </nav>
+
+    <!-- Footer Links -->
+    <div class="mt-auto flex flex-col gap-xs pt-md border-t border-border-subtle">
+        <a href="#" class="flex items-center gap-sm px-md py-sm text-on-surface-variant hover:bg-surface-container-high rounded-lg transition-colors">
+            <span class="material-symbols-outlined">help</span>
+            Supporto
+        </a>
+        <a href="/logout" class="flex items-center gap-sm px-md py-sm text-error hover:bg-error-container transition-colors rounded-lg">
+            <span class="material-symbols-outlined">logout</span>
+            Logout
+        </a>
+    </div>
+</aside>
+
+<!-- Main Content Wrapper -->
+<div class="flex-1 flex flex-col w-full md:ml-0 transition-all duration-300">
+    
+    <!-- Mobile TopBar -->
+    <header class="md:hidden flex justify-between items-center px-lg w-full sticky top-0 z-30 h-16 border-b border-outline-variant bg-surface shadow-sm">
+        <div class="flex items-center gap-3">
+            <button onclick="toggleMenu()" class="text-on-surface-variant p-1">
+                <span class="material-symbols-outlined">menu</span>
+            </button>
+            <span class="font-headline-md text-headline-md font-bold text-primary truncate">AI Booking</span>
+        </div>
+        <div class="w-8 h-8 rounded-full overflow-hidden border border-border-subtle">
+            <img alt="Profilo" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDHA1ZQfGUG8lbxc3K1ZdlT-IL_FqUraZGHYX1jJZ1DqOIq6tsNH9tvSzXuX5CdI38S2RefRdrrX_lj_h3XoqqHEHDtT7rkdHOwYfFZcY7oZWF6OlorpONtKRKHf-Y4xnk63wRGvY5Wgp7dJdNWXpnE9Sj6vdUExcbF4vVG2amHxex1-wgkhPUWV6K-Cy5O_NkdTHYMK5HvdyJq2oI2_kOxCo5PrDbHBUuZ1XHiqZXz4g9DTTmBEddw_g"/>
+        </div>
+    </header>
+
+    <!-- Main Scrollable Area -->
+    <main class="flex-1 p-md md:p-xl overflow-x-hidden flex flex-col gap-lg max-w-[1440px] mx-auto w-full">
+        
+        <!-- Desktop Header -->
+        <header class="hidden md:flex flex-row items-center justify-between gap-md mb-md">
+            <div>
+                <h1 class="font-headline-lg text-headline-lg text-on-background">Benvenuto, Dott. Rossi</h1>
+                <p class="font-body-md text-body-md text-on-surface-variant mt-1">Ecco il riepilogo della tua giornata.</p>
+            </div>
+            <div class="flex items-center gap-md">
+                <button class="w-10 h-10 flex items-center justify-center rounded-full bg-surface-container-lowest border border-border-interactive text-on-surface-variant hover:bg-surface-container-low transition-colors shadow-sm">
+                    <span class="material-symbols-outlined">search</span>
+                </button>
+                <button class="w-10 h-10 flex items-center justify-center rounded-full bg-surface-container-lowest border border-border-interactive text-on-surface-variant hover:bg-surface-container-low transition-colors shadow-sm relative">
+                    <span class="material-symbols-outlined">notifications</span>
+                    <span class="absolute top-2 right-2 w-2 h-2 bg-error rounded-full"></span>
+                </button>
+                <div class="w-10 h-10 rounded-full overflow-hidden border border-border-interactive ml-sm cursor-pointer hover:opacity-90 transition-opacity">
+                    <img alt="Profilo" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDBjLI540-ozGp3habpGmVB1JTMlnInPwRMYlNDKGBpagLeFweC-1uX5JLD5VilQsgG93DjeXA46-BhIwEH7sS1vm6mlV_Mbo14azKSsErIQBAymGvTZem2Xc3yxuJY4UFRwnKsBy77J6X4gLLzKjKw3XDqRlDcyFkNudHdUC_qibYoPkOvLEn3vM0MN73l9igRgO-AgLLhxCntgCdSwXs0pe31h9N-P6H1bejWvV_C_ZpSdDlJMl7cYg"/>
+                </div>
+            </div>
+        </header>
+
+        <!-- Content Grid -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-md md:gap-lg">
+            
+            <!-- Left Column: Calendar Widget -->
+            <div class="lg:col-span-1 space-y-lg">
+                <aside class="bg-surface-card rounded-xl border border-outline-variant p-lg shadow-sm h-fit">
+                    <div class="flex justify-between items-center mb-md">
+                        <h3 class="font-headline-md text-headline-md text-on-background">Ottobre 2023</h3>
+                        <div class="flex gap-xs">
+                            <button class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-surface-container-low text-on-surface-variant transition-colors">
+                                <span class="material-symbols-outlined text-[20px]">chevron_left</span>
+                            </button>
+                            <button class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-surface-container-low text-on-surface-variant transition-colors">
+                                <span class="material-symbols-outlined text-[20px]">chevron_right</span>
+                            </button>
+                        </div>
+                    </div>
+                    <!-- Mini Calendar Grid -->
+                    <div class="grid grid-cols-7 gap-1 text-center font-label-sm text-label-sm text-on-surface-variant mb-2">
+                        <div>Lun</div><div>Mar</div><div>Mer</div><div>Gio</div><div>Ven</div><div>Sab</div><div>Dom</div>
+                    </div>
+                    <div class="grid grid-cols-7 gap-1 text-center font-body-md text-body-md">
+                        <!-- Simplified Days for Demo -->
+                        <div class="w-8 h-8 flex items-center justify-center mx-auto text-on-surface-variant opacity-40">25</div>
+                        <div class="w-8 h-8 flex items-center justify-center mx-auto text-on-surface-variant opacity-40">26</div>
+                        <div class="w-8 h-8 flex items-center justify-center mx-auto text-on-surface-variant opacity-40">27</div>
+                        <div class="w-8 h-8 flex items-center justify-center mx-auto text-on-surface-variant opacity-40">28</div>
+                        <div class="w-8 h-8 flex items-center justify-center mx-auto text-on-surface-variant opacity-40">29</div>
+                        <div class="w-8 h-8 flex items-center justify-center mx-auto text-on-surface-variant opacity-40">30</div>
+                        
+                        <div class="w-8 h-8 flex items-center justify-center mx-auto rounded-lg hover:bg-surface-container-low cursor-pointer transition-colors">1</div>
+                        <div class="w-8 h-8 flex items-center justify-center mx-auto rounded-lg hover:bg-surface-container-low cursor-pointer transition-colors">2</div>
+                        <div class="w-8 h-8 flex items-center justify-center mx-auto rounded-lg hover:bg-surface-container-low cursor-pointer transition-colors">3</div>
+                        <div class="w-8 h-8 flex items-center justify-center mx-auto rounded-lg hover:bg-surface-container-low cursor-pointer transition-colors">4</div>
+                        <div class="w-8 h-8 flex items-center justify-center mx-auto rounded-lg hover:bg-surface-container-low cursor-pointer transition-colors">5</div>
+                        <div class="w-8 h-8 flex items-center justify-center mx-auto rounded-lg hover:bg-surface-container-low cursor-pointer transition-colors">6</div>
+                        <div class="w-8 h-8 flex items-center justify-center mx-auto rounded-lg hover:bg-surface-container-low cursor-pointer transition-colors relative">
+                            7<span class="absolute bottom-1 w-1 h-1 bg-primary rounded-full"></span>
+                        </div>
+                        
+                        <div class="w-8 h-8 flex items-center justify-center mx-auto rounded-lg bg-surface-container text-primary font-semibold cursor-pointer relative">
+                            8<span class="absolute bottom-1 w-1 h-1 bg-primary rounded-full"></span>
+                        </div>
+                        <div class="w-8 h-8 flex items-center justify-center mx-auto rounded-lg hover:bg-surface-container-low cursor-pointer transition-colors">9</div>
+                        <div class="w-8 h-8 flex items-center justify-center mx-auto rounded-lg bg-primary text-on-primary font-semibold shadow-sm cursor-pointer">10</div>
+                        <div class="w-8 h-8 flex items-center justify-center mx-auto rounded-lg hover:bg-surface-container-low cursor-pointer transition-colors">11</div>
+                        <div class="w-8 h-8 flex items-center justify-center mx-auto rounded-lg hover:bg-surface-container-low cursor-pointer transition-colors">12</div>
+                        <div class="w-8 h-8 flex items-center justify-center mx-auto rounded-lg hover:bg-surface-container-low cursor-pointer transition-colors">13</div>
+                        <div class="w-8 h-8 flex items-center justify-center mx-auto rounded-lg hover:bg-surface-container-low cursor-pointer transition-colors">14</div>
+                        <div class="w-8 h-8 flex items-center justify-center mx-auto rounded-lg hover:bg-surface-container-low cursor-pointer transition-colors">15</div>
+                        <div class="w-8 h-8 flex items-center justify-center mx-auto rounded-lg hover:bg-surface-container-low cursor-pointer transition-colors relative">
+                            16<span class="absolute bottom-1 w-1 h-1 bg-secondary rounded-full"></span>
+                        </div>
+                        <!-- ... rest of days truncated for brevity in prompt context, but fully functional in code ... -->
+                        <div class="w-8 h-8 flex items-center justify-center mx-auto rounded-lg hover:bg-surface-container-low cursor-pointer transition-colors">17</div>
+                        <div class="w-8 h-8 flex items-center justify-center mx-auto rounded-lg hover:bg-surface-container-low cursor-pointer transition-colors">18</div>
+                        <div class="w-8 h-8 flex items-center justify-center mx-auto rounded-lg hover:bg-surface-container-low cursor-pointer transition-colors">19</div>
+                        <div class="w-8 h-8 flex items-center justify-center mx-auto rounded-lg hover:bg-surface-container-low cursor-pointer transition-colors">20</div>
+                        <div class="w-8 h-8 flex items-center justify-center mx-auto rounded-lg hover:bg-surface-container-low cursor-pointer transition-colors">21</div>
+                        <div class="w-8 h-8 flex items-center justify-center mx-auto rounded-lg hover:bg-surface-container-low cursor-pointer transition-colors">22</div>
+                        <div class="w-8 h-8 flex items-center justify-center mx-auto rounded-lg hover:bg-surface-container-low cursor-pointer transition-colors">23</div>
+                        <div class="w-8 h-8 flex items-center justify-center mx-auto rounded-lg hover:bg-surface-container-low cursor-pointer transition-colors">24</div>
+                        <div class="w-8 h-8 flex items-center justify-center mx-auto rounded-lg hover:bg-surface-container-low cursor-pointer transition-colors">25</div>
+                        <div class="w-8 h-8 flex items-center justify-center mx-auto rounded-lg hover:bg-surface-container-low cursor-pointer transition-colors">26</div>
+                        <div class="w-8 h-8 flex items-center justify-center mx-auto rounded-lg hover:bg-surface-container-low cursor-pointer transition-colors">27</div>
+                        <div class="w-8 h-8 flex items-center justify-center mx-auto rounded-lg hover:bg-surface-container-low cursor-pointer transition-colors">28</div>
+                        <div class="w-8 h-8 flex items-center justify-center mx-auto rounded-lg hover:bg-surface-container-low cursor-pointer transition-colors">29</div>
+                        <div class="w-8 h-8 flex items-center justify-center mx-auto rounded-lg hover:bg-surface-container-low cursor-pointer transition-colors">30</div>
+                        <div class="w-8 h-8 flex items-center justify-center mx-auto rounded-lg hover:bg-surface-container-low cursor-pointer transition-colors">31</div>
+                    </div>
+                    
+                    <div class="mt-md pt-md border-t border-border-subtle flex flex-col gap-sm">
+                        <div class="flex items-center gap-sm">
+                            <span class="w-2 h-2 rounded-full bg-primary"></span>
+                            <span class="font-label-sm text-label-sm text-on-surface-variant">Oggi (8 Ottobre)</span>
+                        </div>
+                        <div class="flex items-center gap-sm">
+                            <span class="w-2 h-2 rounded-full bg-secondary"></span>
+                            <span class="font-label-sm text-label-sm text-on-surface-variant">Congresso Medico</span>
+                        </div>
+                    </div>
+                </aside>
+
+                <!-- Stats Card Placeholder -->
+                <div class="bg-surface-card rounded-xl border border-outline-variant p-lg shadow-sm">
+                    <h3 class="font-headline-md text-headline-md text-on-background mb-4">Statistiche Rapide</h3>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="bg-surface-container-low p-4 rounded-lg text-center">
+                            <div class="text-2xl font-bold text-primary">12</div>
+                            <div class="text-xs text-on-surface-variant uppercase tracking-wide">Appuntamenti</div>
+                        </div>
+                        <div class="bg-surface-container-low p-4 rounded-lg text-center">
+                            <div class="text-2xl font-bold text-secondary">95%</div>
+                            <div class="text-xs text-on-surface-variant uppercase tracking-wide">Occupazione</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column: Appointments List -->
+            <div class="lg:col-span-2">
+                <section class="bg-surface-card rounded-xl border border-outline-variant shadow-sm overflow-hidden flex flex-col h-full">
+                    <div class="p-lg border-b border-border-subtle flex justify-between items-center bg-surface-container-lowest">
+                        <h3 class="font-headline-md text-headline-md text-on-background">Appuntamenti Oggi</h3>
+                        <button class="text-primary font-label-md text-label-md hover:underline flex items-center gap-xs">
+                            Vedi tutti <span class="material-symbols-outlined text-[16px]">arrow_forward</span>
+                        </button>
+                    </div>
+                    <div class="overflow-x-auto flex-1">
+                        <table class="w-full text-left border-collapse">
+                            <thead>
+                                <tr class="bg-surface-page border-b border-border-subtle font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">
+                                    <th class="p-md font-semibold">Orario</th>
+                                    <th class="p-md font-semibold">Cliente</th>
+                                    <th class="p-md font-semibold">Servizio</th>
+                                    <th class="p-md font-semibold text-center">Stato</th>
+                                    <th class="p-md font-semibold text-right">Azioni</th>
+                                </tr>
+                            </thead>
+                            <tbody class="font-body-md text-body-md text-on-surface">
+                                <tr class="border-b border-border-subtle hover:bg-surface-container-lowest transition-colors group">
+                                    <td class="p-md whitespace-nowrap font-label-md text-label-md">09:00 - 09:45</td>
+                                    <td class="p-md">
+                                        <div class="flex items-center gap-sm">
+                                            <div class="w-8 h-8 rounded-full bg-surface-dim flex items-center justify-center text-on-surface-variant font-label-md text-label-md shrink-0">MR</div>
+                                            <span class="font-medium text-on-background">Mario Rossi</span>
+                                        </div>
+                                    </td>
+                                    <td class="p-md text-on-surface-variant">Visita di Controllo</td>
+                                    <td class="p-md text-center">
+                                        <span class="inline-flex items-center justify-center px-2 py-1 rounded-sm bg-status-confirmed-bg text-status-confirmed-text font-label-sm text-label-sm uppercase">Confermato</span>
+                                    </td>
+                                    <td class="p-md text-right">
+                                        <button class="p-sm text-on-surface-variant hover:text-primary transition-colors opacity-0 group-hover:opacity-100 focus:opacity-100 rounded-lg hover:bg-surface-container-low">
+                                            <span class="material-symbols-outlined text-[20px]">more_vert</span>
+                                        </button>
+                                    </td>
+                                </tr>
+                                <tr class="border-b border-border-subtle hover:bg-surface-container-lowest transition-colors group">
+                                    <td class="p-md whitespace-nowrap font-label-md text-label-md">10:00 - 11:00</td>
+                                    <td class="p-md">
+                                        <div class="flex items-center gap-sm">
+                                            <div class="w-8 h-8 rounded-full bg-surface-dim flex items-center justify-center text-on-surface-variant font-label-md text-label-md shrink-0">LB</div>
+                                            <span class="font-medium text-on-background">Laura Bianchi</span>
+                                        </div>
+                                    </td>
+                                    <td class="p-md text-on-surface-variant">Prima Visita</td>
+                                    <td class="p-md text-center">
+                                        <span class="inline-flex items-center justify-center px-2 py-1 rounded-sm bg-status-pending-bg text-status-pending-text font-label-sm text-label-sm uppercase">In Attesa</span>
+                                    </td>
+                                    <td class="p-md text-right">
+                                        <button class="p-sm text-on-surface-variant hover:text-primary transition-colors opacity-0 group-hover:opacity-100 focus:opacity-100 rounded-lg hover:bg-surface-container-low">
+                                            <span class="material-symbols-outlined text-[20px]">more_vert</span>
+                                        </button>
+                                    </td>
+                                </tr>
+                                <tr class="hover:bg-surface-container-lowest transition-colors group">
+                                    <td class="p-md whitespace-nowrap font-label-md text-label-md">14:00 - 15:00</td>
+                                    <td class="p-md">
+                                        <div class="flex items-center gap-sm">
+                                            <div class="w-8 h-8 rounded-full bg-surface-dim flex items-center justify-center text-on-surface-variant font-label-md text-label-md shrink-0">FR</div>
+                                            <span class="font-medium text-on-background">Francesca Romani</span>
+                                        </div>
+                                    </td>
+                                    <td class="p-md text-on-surface-variant">Consulenza Specialistica</td>
+                                    <td class="p-md text-center">
+                                        <span class="inline-flex items-center justify-center px-2 py-1 rounded-sm bg-status-confirmed-bg text-status-confirmed-text font-label-sm text-label-sm uppercase">Confermato</span>
+                                    </td>
+                                    <td class="p-md text-right">
+                                        <button class="p-sm text-on-surface-variant hover:text-primary transition-colors opacity-0 group-hover:opacity-100 focus:opacity-100 rounded-lg hover:bg-surface-container-low">
+                                            <span class="material-symbols-outlined text-[20px]">more_vert</span>
+                                        </button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </main>
+</div>
+
+<script>
+    function toggleMenu() {
+        const sidebar = document.getElementById('sidebar');
+        const overlay = document.getElementById('overlay');
+        
+        if (sidebar.classList.contains('menu-closed')) {
+            sidebar.classList.remove('menu-closed');
+            sidebar.classList.add('menu-open');
+            overlay.classList.remove('hidden');
+        } else {
+            sidebar.classList.remove('menu-open');
+            sidebar.classList.add('menu-closed');
+            overlay.classList.add('hidden');
+        }
+    }
+</script>
+
+</body>
+</html>
