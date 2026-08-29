@@ -1,1017 +1,180 @@
 <!DOCTYPE html>
 <html lang="it">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Agenda Appuntamenti - Studio</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
-<style>
-  :root{
-    --ink:#16232F;
-    --paper:#F4F6F5;
-    --card:#FFFFFF;
-    --primary:#4B4FE0;
-    --primary-dark:#3A3DBE;
-    --success:#1E8A72;
-    --alert:#E1544B;
-    --muted:#8B94A0;
-    --line:#DDE3E1;
-    --bubble-bot:#EDEEFB;
-    --bubble-user:#DCF4EC;
-    --radius:14px;
-  }
-  *{box-sizing:border-box;}
-  html,body{margin:0;padding:0;}
-  body{
-    background:var(--paper);
-    color:var(--ink);
-    font-family:'Inter',sans-serif;
-    -webkit-font-smoothing:antialiased;
-  }
-  h1,h2,h3{
-    font-family:'Fraunces',serif;
-    font-weight:600;
-    margin:0 0 4px 0;
-    letter-spacing:-0.01em;
-  }
-  .mono{font-family:'IBM Plex Mono',monospace;}
-  
-  /* --- Gate (login) --- */
-  #gate{
-    min-height:100vh;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    flex-direction:column;
-    gap:18px;
-    padding:24px;
-    text-align:center;
-  }
-  #gate .eyebrow{
-    font-family:'IBM Plex Mono',monospace;
-    font-size:12px;
-    letter-spacing:.12em;
-    text-transform:uppercase;
-    color:var(--muted);
-  }
-  #gate h1{font-size:32px;}
-  #gate input{
-    font-size:16px;
-    padding:12px 14px;
-    border:1px solid var(--line);
-    border-radius:10px;
-    width:280px;
-    font-family:'Inter',sans-serif;
-  }
-  #gate button{
-    background:var(--primary);
-    color:#fff;
-    border:none;
-    padding:12px 20px;
-    border-radius:10px;
-    font-size:15px;
-    font-weight:600;
-    cursor:pointer;
-    transition:background .15s ease;
-  }
-  #gate button:hover{background:var(--primary-dark);}
-  #gate .err{color:var(--alert); font-size:13px; min-height:16px;}
-  
-  /* --- App shell --- */
-  #app{display:none;}
-  header.topbar{
-    position:sticky; top:0; z-index:20;
-    display:flex; align-items:center; justify-content:space-between;
-    padding:14px 28px;
-    background:var(--card);
-    border-bottom:1px solid var(--line);
-  }
-  header.topbar .brand{display:flex; align-items:baseline; gap:10px;}
-  header.topbar .brand .eyebrow{
-    font-family:'IBM Plex Mono',monospace;
-    font-size:11px; letter-spacing:.1em; text-transform:uppercase; color:var(--muted);
-  }
-  header.topbar .brand h1{font-size:20px;}
-  header.topbar .nav-links a{
-    margin-left:16px;
-    text-decoration:none;
-    color:var(--muted);
-    font-size:13px;
-    font-weight:500;
-  }
-  header.topbar .nav-links a:hover{color:var(--primary);}
-  
-  .container{
-    max-width:1400px;
-    margin:0 auto;
-    padding:32px 24px;
-  }
-  
-  /* --- Tabs --- */
-  .tabs{
-    display:flex;
-    gap:8px;
-    margin-bottom:24px;
-    border-bottom:2px solid var(--line);
-    padding-bottom:0;
-  }
-  .tab-btn{
-    background:none;
-    border:none;
-    padding:12px 20px;
-    font-size:14px;
-    font-weight:600;
-    color:var(--muted);
-    cursor:pointer;
-    border-bottom:2px solid transparent;
-    margin-bottom:-2px;
-    transition:all .2s ease;
-  }
-  .tab-btn.active{
-    color:var(--primary);
-    border-bottom-color:var(--primary);
-  }
-  .tab-btn:hover:not(.active){
-    color:var(--ink);
-  }
-  .tab-content{display:none;}
-  .tab-content.active{display:block;}
-  
-  /* --- Calendar view --- */
-  .calendar-container{
-    background:var(--card);
-    border:1px solid var(--line);
-    border-radius:var(--radius);
-    padding:24px;
-    margin-bottom:24px;
-  }
-  .calendar-header{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    margin-bottom:20px;
-  }
-  .calendar-nav{
-    display:flex;
-    gap:12px;
-    align-items:center;
-  }
-  .calendar-nav button{
-    background:var(--primary);
-    color:#fff;
-    border:none;
-    padding:8px 14px;
-    border-radius:8px;
-    font-size:13px;
-    font-weight:600;
-    cursor:pointer;
-  }
-  .calendar-nav button:hover{background:var(--primary-dark);}
-  .calendar-nav span{
-    font-size:18px;
-    font-weight:600;
-    font-family:'Fraunces',serif;
-    min-width:200px;
-    text-align:center;
-  }
-  .calendar-grid{
-    display:grid;
-    grid-template-columns:repeat(7,1fr);
-    gap:8px;
-  }
-  .calendar-day-header{
-    text-align:center;
-    padding:12px;
-    font-size:12px;
-    font-weight:600;
-    text-transform:uppercase;
-    letter-spacing:.04em;
-    color:var(--muted);
-  }
-  .calendar-day{
-    min-height:120px;
-    border:1px solid var(--line);
-    border-radius:10px;
-    padding:8px;
-    cursor:pointer;
-    transition:all .2s ease;
-    position:relative;
-    background:#fff;
-  }
-  .calendar-day:hover{
-    border-color:var(--primary);
-    box-shadow:0 2px 8px rgba(75,79,224,0.15);
-  }
-  .calendar-day.other-month{
-    background:#f9fafb;
-    opacity:0.6;
-  }
-  .calendar-day.today{
-    border:2px solid var(--primary);
-  }
-  .calendar-day.has-events{
-    background:#F0F2FF;
-  }
-  .calendar-day.closed{
-    background:#F5F5F5;
-    opacity:0.7;
-  }
-  .calendar-day.closed::after{
-    content:"Chiuso";
-    position:absolute;
-    top:50%;
-    left:50%;
-    transform:translate(-50%,-50%);
-    font-size:11px;
-    font-weight:600;
-    color:var(--muted);
-    text-transform:uppercase;
-  }
-  .day-number{
-    font-size:13px;
-    font-weight:600;
-    margin-bottom:6px;
-  }
-  .event-count{
-    font-size:11px;
-    color:var(--muted);
-    background:var(--bubble-bot);
-    padding:2px 6px;
-    border-radius:6px;
-    display:inline-block;
-  }
-  .day-status{
-    position:absolute;
-    top:6px;
-    right:6px;
-    width:8px;
-    height:8px;
-    border-radius:50%;
-  }
-  .day-status.open{background:var(--success);}
-  .day-status.closed{background:var(--alert);}
-  .day-status.partial{background:#FFA500;}
-  
-  /* --- Working hours editor modal --- */
-  .modal-overlay{
-    position:fixed;
-    top:0;
-    left:0;
-    right:0;
-    bottom:0;
-    background:rgba(22,35,47,0.6);
-    display:none;
-    align-items:center;
-    justify-content:center;
-    z-index:100;
-  }
-  .modal-overlay.active{display:flex;}
-  .modal{
-    background:var(--card);
-    border-radius:var(--radius);
-    padding:24px;
-    max-width:500px;
-    width:90%;
-    max-height:80vh;
-    overflow-y:auto;
-  }
-  .modal h2{
-    font-size:20px;
-    margin-bottom:8px;
-  }
-  .modal .subtitle{
-    color:var(--muted);
-    font-size:13px;
-    margin-bottom:20px;
-  }
-  .modal-actions{
-    display:flex;
-    gap:12px;
-    justify-content:flex-end;
-    margin-top:24px;
-  }
-  .modal-actions button{
-    padding:10px 18px;
-    border-radius:8px;
-    font-size:14px;
-    font-weight:600;
-    cursor:pointer;
-    border:none;
-  }
-  .modal-actions .cancel{
-    background:#f0f0f0;
-    color:var(--ink);
-  }
-  .modal-actions .save{
-    background:var(--primary);
-    color:#fff;
-  }
-  .modal-actions .save:hover{background:var(--primary-dark);}
-  
-  .hours-editor{
-    display:flex;
-    flex-direction:column;
-    gap:16px;
-  }
-  .day-toggle{
-    display:flex;
-    align-items:center;
-    gap:12px;
-    padding:12px;
-    background:#f9fafb;
-    border-radius:10px;
-  }
-  .toggle-switch{
-    width:44px;
-    height:24px;
-    border-radius:12px;
-    background:var(--line);
-    position:relative;
-    cursor:pointer;
-    transition:background .2s ease;
-  }
-  .toggle-switch.on{background:var(--success);}
-  .toggle-switch .knob{
-    position:absolute;
-    top:3px;
-    left:3px;
-    width:18px;
-    height:18px;
-    border-radius:50%;
-    background:#fff;
-    transition:left .2s ease;
-  }
-  .toggle-switch.on .knob{left:23px;}
-  .time-windows{
-    display:flex;
-    flex-direction:column;
-    gap:10px;
-    margin-top:12px;
-    padding:12px;
-    background:#f9fafb;
-    border-radius:10px;
-  }
-  .time-window-row{
-    display:flex;
-    gap:8px;
-    align-items:center;
-  }
-  .time-window-row input{
-    padding:8px 10px;
-    border:1px solid var(--line);
-    border-radius:6px;
-    font-size:13px;
-    font-family:'IBM Plex Mono',monospace;
-    width:90px;
-  }
-  .time-window-row button.remove{
-    background:none;
-    border:1px solid var(--line);
-    color:var(--alert);
-    width:32px;
-    height:32px;
-    border-radius:6px;
-    cursor:pointer;
-    font-size:16px;
-  }
-  .add-time-btn{
-    background:none;
-    border:1px dashed var(--muted);
-    color:var(--ink);
-    padding:8px 14px;
-    border-radius:8px;
-    font-size:13px;
-    cursor:pointer;
-    align-self:flex-start;
-  }
-  .add-time-btn:hover{border-color:var(--primary); color:var(--primary);}
-  
-  /* --- Stats cards --- */
-  .stats{
-    display:grid;
-    grid-template-columns:repeat(auto-fit, minmax(200px, 1fr));
-    gap:16px;
-    margin-bottom:32px;
-  }
-  .stat-card{
-    background:var(--card);
-    border:1px solid var(--line);
-    border-radius:var(--radius);
-    padding:20px;
-  }
-  .stat-card .label{
-    font-family:'IBM Plex Mono',monospace;
-    font-size:11px;
-    letter-spacing:.1em;
-    text-transform:uppercase;
-    color:var(--muted);
-    margin-bottom:8px;
-  }
-  .stat-card .value{
-    font-size:32px;
-    font-weight:600;
-    font-family:'Fraunces',serif;
-  }
-  .stat-card .sub{
-    font-size:12px;
-    color:var(--muted);
-    margin-top:4px;
-  }
-  
-  /* --- Filters --- */
-  .filters{
-    background:var(--card);
-    border:1px solid var(--line);
-    border-radius:var(--radius);
-    padding:16px 20px;
-    margin-bottom:24px;
-    display:flex;
-    flex-wrap:wrap;
-    gap:12px;
-    align-items:center;
-  }
-  .filters label{
-    font-size:12px;
-    font-weight:600;
-    color:var(--muted);
-    text-transform:uppercase;
-    letter-spacing:.04em;
-  }
-  .filters input[type=date], .filters select{
-    padding:8px 12px;
-    border:1px solid var(--line);
-    border-radius:8px;
-    font-family:'Inter',sans-serif;
-    font-size:14px;
-    background:#fff;
-  }
-  .filters button{
-    background:var(--primary);
-    color:#fff;
-    border:none;
-    padding:8px 16px;
-    border-radius:8px;
-    font-size:13px;
-    font-weight:600;
-    cursor:pointer;
-    margin-left:auto;
-  }
-  .filters button:hover{background:var(--primary-dark);}
-  
-  /* --- Appointments table --- */
-  .appointments-table{
-    background:var(--card);
-    border:1px solid var(--line);
-    border-radius:var(--radius);
-    overflow:hidden;
-  }
-  .appointments-table table{
-    width:100%;
-    border-collapse:collapse;
-  }
-  .appointments-table th{
-    background:#F8F9FA;
-    text-align:left;
-    padding:12px 16px;
-    font-size:11px;
-    font-weight:600;
-    text-transform:uppercase;
-    letter-spacing:.04em;
-    color:var(--muted);
-    border-bottom:1px solid var(--line);
-  }
-  .appointments-table td{
-    padding:14px 16px;
-    border-bottom:1px solid var(--line);
-    font-size:14px;
-  }
-  .appointments-table tr:last-child td{border-bottom:none;}
-  .appointments-table tr:hover{background:#F8F9FA;}
-  
-  .status-badge{
-    display:inline-block;
-    padding:4px 10px;
-    border-radius:12px;
-    font-size:11px;
-    font-weight:600;
-    text-transform:uppercase;
-    letter-spacing:.04em;
-  }
-  .status-confirmed{
-    background:#DCF4EC;
-    color:#1E8A72;
-  }
-  .date-cell{
-    font-weight:600;
-  }
-  .time-cell{
-    font-family:'IBM Plex Mono',monospace;
-    color:var(--muted);
-  }
-  
-  .empty-state{
-    text-align:center;
-    padding:60px 20px;
-    color:var(--muted);
-  }
-  .empty-state h3{
-    font-size:18px;
-    margin-bottom:8px;
-    color:var(--ink);
-  }
-  
-  @media (max-width: 768px){
-    .appointments-table{overflow-x:auto;}
-    .appointments-table table{min-width:600px;}
-    .filters{flex-direction:column; align-items:stretch;}
-    .filters button{margin-left:0;}
-    .calendar-day{min-height:80px;}
-    .calendar-day-header{font-size:10px;}
-  }
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agenda - AI Booking</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Manrope:wght@600;700&display=swap" rel="stylesheet"/>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        "surface-page": "#f9fafb", "primary": "#006194", "on-primary": "#ffffff",
+                        "surface-card": "#ffffff", "outline-variant": "#e5e7eb", "on-surface": "#151c27",
+                        "on-surface-variant": "#3f4850", "surface-container-low": "#f0f3ff",
+                        "status-confirmed-bg": "#f0fdf4", "status-confirmed-text": "#16a34a",
+                        "status-pending-bg": "#fffbeb", "status-pending-text": "#b45309",
+                        "status-cancelled-bg": "#fef2f2", "status-cancelled-text": "#b91c1c"
+                    },
+                    fontFamily: { body: ["Inter"], headline: ["Manrope"] }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        h1, h2, h3 { font-family: 'Manrope', sans-serif; }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+        #mobile-drawer { transition: transform 0.3s ease-in-out; }
+        .drawer-open { transform: translateX(0) !important; }
+        .drawer-closed { transform: translateX(-100%) !important; }
+    </style>
 </head>
-<body>
+<body class="bg-surface-page text-on-surface flex min-h-screen overflow-hidden">
+    <div id="overlay" class="fixed inset-0 bg-black/50 z-40 hidden md:hidden" onclick="toggleDrawer()"></div>
 
-<!-- ============ GATE (accesso con password) ============ -->
-<div id="gate">
-  <div class="eyebrow">Agenda prenotazioni</div>
-  <h1>Accedi per vedere<br/>gli appuntamenti</h1>
-  <input id="pwd" type="password" placeholder="Password di accesso" autocomplete="current-password" />
-  <button onclick="tryLogin()">Entra</button>
-  <div class="err" id="gateErr"></div>
-</div>
-
-<!-- ============ APP ============ -->
-<div id="app">
-  <header class="topbar">
-    <div class="brand">
-      <span class="eyebrow">Studio</span>
-      <h1 id="brandName">Agenda Appuntamenti</h1>
-    </div>
-    <div class="nav-links">
-      <a href="/">Configurazione</a>
-      <a href="/agenda" style="color:var(--primary);">Agenda</a>
-    </div>
-  </header>
-  
-  <div class="container">
-    <!-- Tabs -->
-    <div class="tabs">
-      <button class="tab-btn active" onclick="switchTab('calendar')">Calendario</button>
-      <button class="tab-btn" onclick="switchTab('list')">Lista Appuntamenti</button>
-    </div>
-    
-    <!-- Calendar Tab -->
-    <div id="calendarTab" class="tab-content active">
-      <div class="calendar-container">
-        <div class="calendar-header">
-          <div class="calendar-nav">
-            <button onclick="prevMonth()">←</button>
-            <span id="calendarMonth"></span>
-            <button onclick="nextMonth()">→</button>
-          </div>
-          <button onclick="openHoursEditor()" style="background:var(--success);color:#fff;border:none;padding:10px 16px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;">Modifica Orari Lavorativi</button>
+    <!-- Sidebar (Identica a dashboard) -->
+    <aside id="mobile-drawer" class="fixed md:relative z-50 h-full w-64 bg-white border-r border-outline-variant flex flex-col drawer-closed md:translate-x-0 shadow-xl md:shadow-none">
+        <div class="h-16 flex items-center px-6 border-b border-outline-variant">
+            <div class="w-8 h-8 bg-primary rounded-lg flex items-center justify-center text-white mr-3"><span class="material-symbols-outlined text-sm">smart_toy</span></div>
+            <span class="font-headline font-bold text-lg text-primary">AI Booking</span>
+            <button class="md:hidden ml-auto text-on-surface-variant" onclick="toggleDrawer()"><span class="material-symbols-outlined">close</span></button>
         </div>
-        <div class="calendar-grid">
-          <div class="calendar-day-header">Lun</div>
-          <div class="calendar-day-header">Mar</div>
-          <div class="calendar-day-header">Mer</div>
-          <div class="calendar-day-header">Gio</div>
-          <div class="calendar-day-header">Ven</div>
-          <div class="calendar-day-header">Sab</div>
-          <div class="calendar-day-header">Dom</div>
+        <nav class="flex-1 p-4 space-y-1 overflow-y-auto">
+            <a href="/dashboard" class="flex items-center gap-3 px-3 py-2.5 text-on-surface-variant hover:bg-surface-container-low hover:text-primary rounded-lg font-medium transition-colors"><span class="material-symbols-outlined">dashboard</span> Dashboard</a>
+            <a href="/agenda" class="flex items-center gap-3 px-3 py-2.5 bg-surface-container-low text-primary rounded-lg font-medium transition-colors"><span class="material-symbols-outlined">calendar_month</span> Agenda</a>
+            <a href="#" class="flex items-center gap-3 px-3 py-2.5 text-on-surface-variant hover:bg-surface-container-low hover:text-primary rounded-lg font-medium transition-colors"><span class="material-symbols-outlined">group</span> Clienti</a>
+            <a href="/statistiche" class="flex items-center gap-3 px-3 py-2.5 text-on-surface-variant hover:bg-surface-container-low hover:text-primary rounded-lg font-medium transition-colors"><span class="material-symbols-outlined">analytics</span> Statistiche</a>
+            <a href="/configurazione" class="flex items-center gap-3 px-3 py-2.5 text-on-surface-variant hover:bg-surface-container-low hover:text-primary rounded-lg font-medium transition-colors"><span class="material-symbols-outlined">settings</span> Configurazione</a>
+        </nav>
+        <div class="p-4 border-t border-outline-variant space-y-1">
+            <a href="/" class="flex items-center gap-3 px-3 py-2.5 text-error hover:bg-red-50 rounded-lg font-medium"><span class="material-symbols-outlined">logout</span> Esci</a>
         </div>
-        <div class="calendar-grid" id="calendarDays"></div>
-      </div>
-    </div>
-    
-    <!-- List Tab -->
-    <div id="listTab" class="tab-content">
-      <!-- Stats -->
-      <div class="stats">
-        <div class="stat-card">
-          <div class="label">Oggi</div>
-          <div class="value" id="statToday">0</div>
-          <div class="sub">appuntamenti</div>
+    </aside>
+
+    <main class="flex-1 flex flex-col h-screen overflow-hidden">
+        <header class="h-16 bg-white border-b border-outline-variant flex items-center justify-between px-4 md:px-8 shrink-0">
+            <div class="flex items-center gap-4">
+                <button class="md:hidden text-on-surface-variant" onclick="toggleDrawer()"><span class="material-symbols-outlined">menu</span></button>
+                <h1 class="font-headline text-xl font-bold text-on-surface">Agenda Completa</h1>
+            </div>
+        </header>
+
+        <div class="flex-1 overflow-y-auto p-4 md:p-8">
+            <div class="max-w-5xl mx-auto space-y-6">
+                <!-- Filtri Rapidi -->
+                <div class="flex flex-wrap gap-4 items-center justify-between bg-white p-4 rounded-xl border border-outline-variant shadow-sm">
+                    <div class="flex items-center gap-2">
+                        <input type="date" id="filter-start" class="border border-outline-variant rounded-lg px-3 py-2 text-sm focus:ring-primary focus:border-primary">
+                        <span class="text-on-surface-variant">-</span>
+                        <input type="date" id="filter-end" class="border border-outline-variant rounded-lg px-3 py-2 text-sm focus:ring-primary focus:border-primary">
+                        <button onclick="applyFilters()" class="bg-primary text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-opacity-90">Filtra</button>
+                    </div>
+                    <div class="flex gap-2">
+                         <select id="filter-status" class="border border-outline-variant rounded-lg px-3 py-2 text-sm bg-white">
+                            <option value="">Tutti gli stati</option>
+                            <option value="confirmed">Confermati</option>
+                            <option value="pending">In attesa</option>
+                            <option value="cancelled">Cancellati</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Tabella -->
+                <div class="bg-white rounded-xl border border-outline-variant shadow-sm overflow-hidden">
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse">
+                            <thead class="bg-surface-page text-xs uppercase text-on-surface-variant font-semibold">
+                                <tr>
+                                    <th class="p-4">Data</th>
+                                    <th class="p-4">Orario</th>
+                                    <th class="p-4">Cliente</th>
+                                    <th class="p-4">Servizio</th>
+                                    <th class="p-4 text-center">Stato</th>
+                                    <th class="p-4 text-right">Note</th>
+                                </tr>
+                            </thead>
+                            <tbody id="agenda-table-body" class="text-sm divide-y divide-outline-variant">
+                                <tr><td colspan="6" class="p-8 text-center">Caricamento...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
         </div>
-        <div class="stat-card">
-          <div class="label">Questa settimana</div>
-          <div class="value" id="statWeek">0</div>
-          <div class="sub">appuntamenti</div>
-        </div>
-        <div class="stat-card">
-          <div class="label">Totale</div>
-          <div class="value" id="statTotal">0</div>
-          <div class="sub">appuntamenti</div>
-        </div>
-      </div>
-      
-      <!-- Filters -->
-      <div class="filters">
-        <label>Data da:</label>
-        <input type="date" id="filterFrom" />
-        <label>Data a:</label>
-        <input type="date" id="filterTo" />
-        <button onclick="applyFilters()">Filtra</button>
-      </div>
-      
-      <!-- Table -->
-      <div class="appointments-table">
-        <table>
-          <thead>
-            <tr>
-              <th>Data</th>
-              <th>Ora</th>
-              <th>Paziente</th>
-              <th>Telefono</th>
-              <th>Servizio</th>
-              <th>Prenotato il</th>
-            </tr>
-          </thead>
-          <tbody id="appointmentsBody">
-          </tbody>
-        </table>
-        <div class="empty-state" id="emptyState" style="display:none;">
-          <h3>Nessun appuntamento trovato</h3>
-          <p>Prova a modificare i filtri o controlla più tardi.</p>
-        </div>
-      </div>
-    </div>
-  </div>
-  
-  <!-- Modal for editing working hours -->
-  <div class="modal-overlay" id="hoursModal">
-    <div class="modal">
-      <h2>Modifica Orari Lavorativi</h2>
-      <p class="subtitle">Configura i giorni e gli orari di apertura dello studio. Disattiva un giorno per renderlo non lavorativo.</p>
-      
-      <div class="hours-editor" id="hoursEditor">
-        <!-- Populated dynamically -->
-      </div>
-      
-      <div class="modal-actions">
-        <button class="cancel" onclick="closeHoursEditor()">Annulla</button>
-        <button class="save" onclick="saveWorkingHours()">Salva Modifiche</button>
-      </div>
-    </div>
-  </div>
-</div>
+    </main>
 
-<script>
-let pwd = localStorage.getItem("admin_password") || "";
-let allAppointments = [];
-let currentConfig = null;
-let calendarDate = new Date();
-let tempWorkingHours = {};
+    <script>
+        function toggleDrawer() {
+            const drawer = document.getElementById('mobile-drawer');
+            const overlay = document.getElementById('overlay');
+            if (drawer.classList.contains('drawer-closed')) {
+                drawer.classList.remove('drawer-closed'); drawer.classList.add('drawer-open'); overlay.classList.remove('hidden');
+            } else {
+                drawer.classList.remove('drawer-open'); drawer.classList.add('drawer-closed'); overlay.classList.add('hidden');
+            }
+        }
 
-// Tab switching
-function switchTab(tabName){
-  document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-  document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
-  
-  if(tabName === 'calendar'){
-    document.querySelector('.tab-btn:first-child').classList.add('active');
-    document.getElementById('calendarTab').classList.add('active');
-    renderCalendar();
-  } else {
-    document.querySelector('.tab-btn:last-child').classList.add('active');
-    document.getElementById('listTab').classList.add('active');
-    applyFilters();
-  }
-}
+        let allAppointments = [];
 
-// Calendar functions
-function renderCalendar(){
-  const year = calendarDate.getFullYear();
-  const month = calendarDate.getMonth();
-  
-  const monthNames = ['Gennaio','Febbraio','Marzo','Aprile','Maggio','Giugno','Luglio','Agosto','Settembre','Ottobre','Novembre','Dicembre'];
-  document.getElementById('calendarMonth').textContent = `${monthNames[month]} ${year}`;
-  
-  const firstDay = new Date(year, month, 1);
-  const lastDay = new Date(year, month + 1, 0);
-  const startDayOfWeek = (firstDay.getDay() + 6) % 7; // Monday = 0
-  const totalDays = lastDay.getDate();
-  
-  const today = new Date().toISOString().slice(0,10);
-  
-  let html = '';
-  
-  // Previous month days
-  const prevMonthLastDay = new Date(year, month, 0).getDate();
-  for(let i = startDayOfWeek - 1; i >= 0; i--){
-    const day = prevMonthLastDay - i;
-    html += `<div class="calendar-day other-month"><div class="day-number">${day}</div></div>`;
-  }
-  
-  // Current month days
-  for(let day = 1; day <= totalDays; day++){
-    const dateStr = `${year}-${String(month + 1).padStart(2,'0')}-${String(day).padStart(2,'0')}`;
-    const dayOfWeek = new Date(dateStr).getDay();
-    const isWeekend = dayOfWeek === 0 || dayOfWeek === 6;
-    
-    let classes = 'calendar-day';
-    if(dateStr === today) classes += ' today';
-    
-    // Check if day has appointments
-    const dayAppts = allAppointments.filter(a => a.date === dateStr);
-    if(dayAppts.length > 0) classes += ' has-events';
-    
-    // Check if day is closed (weekend or exclusion)
-    const isClosed = isDayClosed(dateStr);
-    if(isClosed) classes += ' closed';
-    
-    const dayNames = ['Dom','Lun','Mar','Mer','Gio','Ven','Sab'];
-    const statusClass = isClosed ? 'closed' : (dayAppts.length > 0 ? 'open' : 'open');
-    
-    html += `
-      <div class="${classes}" onclick="onDayClick('${dateStr}')">
-        <div class="day-status ${statusClass}"></div>
-        <div class="day-number">${day} ${dayNames[dayOfWeek]}</div>
-        ${dayAppts.length > 0 ? `<span class="event-count">${dayAppts.length} app.</span>` : ''}
-      </div>
-    `;
-  }
-  
-  // Next month days to fill grid
-  const totalCells = startDayOfWeek + totalDays;
-  const remaining = totalCells <= 35 ? 35 - totalCells : 42 - totalCells;
-  for(let day = 1; day <= remaining; day++){
-    html += `<div class="calendar-day other-month"><div class="day-number">${day}</div></div>`;
-  }
-  
-  document.getElementById('calendarDays').innerHTML = html;
-}
+        async function fetchAppointments() {
+            try {
+                const res = await fetch('/api/appointments');
+                allAppointments = await res.json();
+                applyFilters();
+            } catch (e) { console.error(e); }
+        }
 
-function isDayClosed(dateStr){
-  const date = new Date(dateStr);
-  const dayKey = getDayKey(date);
-  
-  // Check if weekend
-  const dayOfWeek = date.getDay();
-  if(dayOfWeek === 0 || dayOfWeek === 6) return true;
-  
-  // Check exclusions
-  if(currentConfig && currentConfig.exclusions && currentConfig.exclusions.dates){
-    if(currentConfig.exclusions.dates.includes(dateStr)) return true;
-  }
-  
-  // Check opening hours
-  if(currentConfig && currentConfig.opening_hours){
-    const hours = currentConfig.opening_hours[dayKey];
-    if(!hours || hours.length === 0) return true;
-  }
-  
-  return false;
-}
+        function applyFilters() {
+            const start = document.getElementById('filter-start').value;
+            const end = document.getElementById('filter-end').value;
+            const status = document.getElementById('filter-status').value;
+            
+            const filtered = allAppointments.filter(app => {
+                let match = true;
+                if (start && app.date < start) match = false;
+                if (end && app.date > end) match = false;
+                if (status && app.status !== status) match = false;
+                return match;
+            });
 
-function getDayKey(date){
-  const days = ['sun','mon','tue','wed','thu','fri','sat'];
-  return days[date.getDay()];
-}
+            renderTable(filtered);
+        }
 
-function prevMonth(){
-  calendarDate.setMonth(calendarDate.getMonth() - 1);
-  renderCalendar();
-}
+        function renderTable(data) {
+            const tbody = document.getElementById('agenda-table-body');
+            if (data.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="6" class="p-8 text-center text-on-surface-variant">Nessun appuntamento trovato.</td></tr>`;
+                return;
+            }
 
-function nextMonth(){
-  calendarDate.setMonth(calendarDate.getMonth() + 1);
-  renderCalendar();
-}
+            tbody.innerHTML = data.sort((a,b) => (a.date+a.time).localeCompare(b.date+b.time)).map(app => {
+                let statusClass = app.status === 'confirmed' ? 'bg-status-confirmed-bg text-status-confirmed-text' : 
+                                  app.status === 'pending' ? 'bg-status-pending-bg text-status-pending-text' : 
+                                  'bg-status-cancelled-bg text-status-cancelled-text';
+                let statusText = app.status === 'confirmed' ? 'Confermato' : app.status === 'pending' ? 'In Attesa' : 'Cancellato';
 
-function onDayClick(dateStr){
-  // Filter appointments for this day and switch to list view
-  document.getElementById('filterFrom').value = dateStr;
-  document.getElementById('filterTo').value = dateStr;
-  switchTab('list');
-  applyFilters();
-}
+                return `
+                <tr class="hover:bg-surface-container-low transition-colors">
+                    <td class="p-4 font-medium">${new Date(app.date).toLocaleDateString('it-IT')}</td>
+                    <td class="p-4">${app.time}</td>
+                    <td class="p-4 font-semibold text-on-surface">${app.client_name}</td>
+                    <td class="p-4 text-on-surface-variant">${app.service || '-'}</td>
+                    <td class="p-4 text-center"><span class="inline-flex px-2 py-1 rounded text-xs font-bold uppercase ${statusClass}">${statusText}</span></td>
+                    <td class="p-4 text-right text-xs text-on-surface-variant truncate max-w-xs">${app.notes || '-'}</td>
+                </tr>`;
+            }).join('');
+        }
 
-// Working hours editor
-function openHoursEditor(){
-  if(!currentConfig){
-    alert('Caricamento configurazione...');
-    return;
-  }
-  
-  tempWorkingHours = JSON.parse(JSON.stringify(currentConfig.opening_hours));
-  
-  const dayLabels = {mon:'Lunedì',tue:'Martedì',wed:'Mercoledì',thu:'Giovedì',fri:'Venerdì',sat:'Sabato',sun:'Domenica'};
-  const dayKeys = ['mon','tue','wed','thu','fri','sat','sun'];
-  
-  let html = '';
-  dayKeys.forEach(key => {
-    const hours = tempWorkingHours[key] || [];
-    const isOpen = hours.length > 0;
-    
-    html += `
-      <div class="day-toggle">
-        <div style="flex:1;font-weight:600;">${dayLabels[key]}</div>
-        <div class="toggle-switch ${isOpen ? 'on' : ''}" onclick="toggleDayHours('${key}')">
-          <div class="knob"></div>
-        </div>
-      </div>
-      <div class="time-windows" id="timewindows-${key}" style="${isOpen ? '' : 'display:none;'}">
-    `;
-    
-    hours.forEach((w, i) => {
-      html += `
-        <div class="time-window-row">
-          <input type="text" value="${w.start}" onchange="updateTimeWindow('${key}',${i},'start',this.value)" placeholder="Inizio"/>
-          <span>–</span>
-          <input type="text" value="${w.end}" onchange="updateTimeWindow('${key}',${i},'end',this.value)" placeholder="Fine"/>
-          <button class="remove" onclick="removeTimeWindow('${key}',${i})">×</button>
-        </div>
-      `;
-    });
-    
-    html += `
-      <button class="add-time-btn" onclick="addTimeWindow('${key}')">+ Aggiungi fascia oraria</button>
-      </div>
-    `;
-  });
-  
-  document.getElementById('hoursEditor').innerHTML = html;
-  document.getElementById('hoursModal').classList.add('active');
-}
+        // Set default dates (today to end of month)
+        document.getElementById('filter-start').valueAsDate = new Date();
+        const endOfMonth = new Date(); endOfMonth.setDate(endOfMonth.getDate() + 30);
+        document.getElementById('filter-end').valueAsDate = endOfMonth;
 
-function toggleDayHours(dayKey){
-  if(tempWorkingHours[dayKey] && tempWorkingHours[dayKey].length > 0){
-    tempWorkingHours[dayKey] = [];
-  } else {
-    tempWorkingHours[dayKey] = [{start:'09:00', end:'13:00'}];
-  }
-  openHoursEditor(); // Re-render
-}
-
-function updateTimeWindow(dayKey, index, field, value){
-  tempWorkingHours[dayKey][index][field] = value;
-}
-
-function removeTimeWindow(dayKey, index){
-  tempWorkingHours[dayKey].splice(index, 1);
-  openHoursEditor(); // Re-render
-}
-
-function addTimeWindow(dayKey){
-  tempWorkingHours[dayKey].push({start:'09:00', end:'13:00'});
-  openHoursEditor(); // Re-render
-}
-
-function closeHoursEditor(){
-  document.getElementById('hoursModal').classList.remove('active');
-}
-
-async function saveWorkingHours(){
-  if(!pwd){
-    alert('Sessione scaduta. Effettua nuovamente il login.');
-    return;
-  }
-  
-  const updatedConfig = {...currentConfig, opening_hours: tempWorkingHours};
-  
-  try{
-    const res = await fetch('/api/config', {
-      method:'POST',
-      headers:{'Content-Type':'application/json', 'x-admin-password': pwd},
-      body: JSON.stringify(updatedConfig)
-    });
-    
-    if(res.ok){
-      currentConfig = updatedConfig;
-      closeHoursEditor();
-      renderCalendar();
-      alert('Orari aggiornati con successo!');
-    } else {
-      alert('Errore nel salvataggio. Riprova.');
-    }
-  } catch(err){
-    console.error(err);
-    alert('Errore di connessione.');
-  }
-}
-
-async function tryLogin(){
-  const val = document.getElementById("pwd").value;
-  const res = await fetch("/api/login", {
-    method:"POST", headers:{"Content-Type":"application/json"},
-    body: JSON.stringify({password: val})
-  });
-  const data = await res.json();
-  if(data.ok){
-    pwd = val;
-    localStorage.setItem("admin_password", val);
-    document.getElementById("gateErr").textContent = "";
-    await loadAppointments();
-  } else {
-    document.getElementById("gateErr").textContent = "Password non corretta.";
-  }
-}
-
-async function loadAppointments(){
-  const res = await fetch("/api/appointments", { headers: { "x-admin-password": pwd }});
-  if(res.status === 401){
-    document.getElementById("gate").style.display = "flex";
-    document.getElementById("app").style.display = "none";
-    return;
-  }
-  allAppointments = await res.json();
-  
-  // Load config for calendar
-  const configRes = await fetch("/api/config", { headers: { "x-admin-password": pwd }});
-  if(configRes.ok){
-    currentConfig = await configRes.json();
-  }
-  
-  document.getElementById("gate").style.display = "none";
-  document.getElementById("app").style.display = "block";
-  
-  // Set default date filters
-  const today = new Date().toISOString().slice(0,10);
-  const nextWeek = new Date(Date.now() + 7*24*60*60*1000).toISOString().slice(0,10);
-  document.getElementById("filterFrom").value = today;
-  document.getElementById("filterTo").value = nextWeek;
-  
-  render();
-}
-
-function render(){
-  renderCalendar();
-  applyFilters();
-}
-
-function applyFilters(){
-  const from = document.getElementById("filterFrom").value;
-  const to = document.getElementById("filterTo").value;
-  
-  let filtered = allAppointments;
-  if(from) filtered = filtered.filter(a => a.date >= from);
-  if(to) filtered = filtered.filter(a => a.date <= to);
-  
-  // Sort by date and time
-  filtered.sort((a,b) => {
-    const dateCompare = a.date.localeCompare(b.date);
-    if(dateCompare !== 0) return dateCompare;
-    return a.start_time.localeCompare(b.start_time);
-  });
-  
-  renderTable(filtered);
-  renderStats(filtered);
-}
-
-function renderTable(appointments){
-  const tbody = document.getElementById("appointmentsBody");
-  const empty = document.getElementById("emptyState");
-  
-  if(appointments.length === 0){
-    tbody.innerHTML = "";
-    empty.style.display = "block";
-    return;
-  }
-  
-  empty.style.display = "none";
-  tbody.innerHTML = appointments.map(a => {
-    const createdDate = new Date(a.created_at).toLocaleDateString('it-IT', {day:'2-digit', month:'2-digit', year:'numeric'});
-    return `
-      <tr>
-        <td class="date-cell">${formatDate(a.date)}</td>
-        <td class="time-cell">${a.start_time} - ${a.end_time}</td>
-        <td>${escapeHtml(a.name || 'N/A')}</td>
-        <td class="mono">${escapeHtml(a.phone)}</td>
-        <td>${escapeHtml(a.service || '—')}</td>
-        <td class="mono" style="font-size:12px;color:var(--muted);">${createdDate}</td>
-      </tr>
-    `;
-  }).join("");
-}
-
-function renderStats(appointments){
-  const today = new Date().toISOString().slice(0,10);
-  const weekFromNow = new Date(Date.now() + 7*24*60*60*1000).toISOString().slice(0,10);
-  
-  const todayCount = appointments.filter(a => a.date === today).length;
-  const weekCount = appointments.filter(a => a.date >= today && a.date <= weekFromNow).length;
-  const total = appointments.length;
-  
-  document.getElementById("statToday").textContent = todayCount;
-  document.getElementById("statWeek").textContent = weekCount;
-  document.getElementById("statTotal").textContent = total;
-}
-
-function formatDate(isoDate){
-  const d = new Date(isoDate + 'T00:00:00');
-  return d.toLocaleDateString('it-IT', {weekday:'short', day:'2-digit', month:'2-digit'});
-}
-
-function escapeHtml(text){
-  const div = document.createElement('div');
-  div.textContent = text;
-  return div.innerHTML;
-}
-
-if(pwd){ loadAppointments(); }
-</script>
+        fetchAppointments();
+    </script>
 </body>
 </html>
