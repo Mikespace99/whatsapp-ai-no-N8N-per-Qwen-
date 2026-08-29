@@ -38,6 +38,11 @@ app.get("/agenda", (req, res) => {
   res.sendFile(path.join(__dirname, "public", "agenda.html"));
 });
 
+// Nuova dashboard ottimizzata
+app.get("/dashboard", (req, res) => {
+  res.sendFile(path.join(__dirname, "public", "dashboard.html"));
+});
+
 app.listen(PORT, () => {
   console.log(`Server avviato su porta ${PORT}`);
   console.log(`Webhook WhatsApp: POST /webhook/whatsapp`);
