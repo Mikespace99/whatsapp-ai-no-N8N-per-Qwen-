@@ -9,33 +9,16 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Manrope:wght@600;700&display=swap" rel="stylesheet"/>
     <script>
         tailwind.config = {
-            darkMode: "class",
             theme: {
                 extend: {
                     colors: {
-                        "surface-page": "#f9fafb",
-                        "primary": "#006194",
-                        "on-primary": "#ffffff",
-                        "secondary-container": "#39b8fd",
-                        "on-secondary-container": "#004666",
-                        "surface-card": "#ffffff",
-                        "outline-variant": "#e5e7eb",
-                        "on-surface": "#151c27",
-                        "on-surface-variant": "#3f4850",
-                        "surface-container-low": "#f0f3ff",
-                        "surface-container-high": "#e2e8f8",
-                        "error": "#ba1a1a",
-                        "status-confirmed-bg": "#f0fdf4",
-                        "status-confirmed-text": "#16a34a",
-                        "status-pending-bg": "#fffbeb",
-                        "status-pending-text": "#b45309",
-                        "status-cancelled-bg": "#fef2f2",
-                        "status-cancelled-text": "#b91c1c"
+                        "surface-page": "#f9fafb", "primary": "#006194", "on-primary": "#ffffff",
+                        "secondary-container": "#39b8fd", "surface-card": "#ffffff", "outline-variant": "#e5e7eb",
+                        "on-surface": "#151c27", "on-surface-variant": "#3f4850", "surface-container-low": "#f0f3ff",
+                        "status-confirmed-bg": "#f0fdf4", "status-confirmed-text": "#16a34a",
+                        "status-pending-bg": "#fffbeb", "status-pending-text": "#b45309"
                     },
-                    fontFamily: {
-                        body: ["Inter", "sans-serif"],
-                        headline: ["Manrope", "sans-serif"]
-                    }
+                    fontFamily: { body: ["Inter"], headline: ["Manrope"] }
                 }
             }
         }
@@ -44,66 +27,65 @@
         body { font-family: 'Inter', sans-serif; }
         h1, h2, h3 { font-family: 'Manrope', sans-serif; }
         .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
-        /* Mobile Drawer Transition */
-        #mobile-drawer { transition: transform 0.3s ease-in-out; }
-        .drawer-open { transform: translateX(0) !important; }
-        .drawer-closed { transform: translateX(-100%) !important; }
+        
+        /* Sidebar Mobile Logic */
+        #sidebar { transition: transform 0.3s ease-in-out; }
+        .sidebar-open { transform: translateX(0) !important; }
+        .sidebar-closed { transform: translateX(-100%) !important; }
     </style>
 </head>
 <body class="bg-surface-page text-on-surface flex min-h-screen overflow-hidden">
 
-    <!-- Overlay per mobile -->
-    <div id="overlay" class="fixed inset-0 bg-black/50 z-40 hidden md:hidden glass" onclick="toggleDrawer()"></div>
+    <!-- Overlay Scuro per Mobile -->
+    <div id="overlay" class="fixed inset-0 bg-black/50 z-40 hidden md:hidden glass" onclick="toggleSidebar()"></div>
 
-    <!-- Sidebar (Desktop & Mobile Drawer) -->
-    <aside id="mobile-drawer" class="fixed md:relative z-50 h-full w-64 bg-white border-r border-outline-variant flex flex-col drawer-closed md:translate-x-0 shadow-xl md:shadow-none">
-        <!-- Logo Area -->
-        <div class="h-16 flex items-center px-6 border-b border-outline-variant">
-            <div class="w-8 h-8 bg-primary rounded-lg flex items-center justify-center text-white mr-3">
-                <span class="material-symbols-outlined text-sm">smart_toy</span>
+    <!-- SIDEBAR -->
+    <aside id="sidebar" class="fixed md:relative z-50 h-full w-64 bg-white border-r border-outline-variant flex flex-col sidebar-closed md:translate-x-0 shadow-xl md:shadow-none">
+        <!-- Logo -->
+        <div class="h-16 flex items-center justify-between px-6 border-b border-outline-variant bg-white">
+            <div class="flex items-center gap-3">
+                <div class="w-8 h-8 bg-primary rounded-lg flex items-center justify-center text-white">
+                    <span class="material-symbols-outlined text-sm">smart_toy</span>
+                </div>
+                <span class="font-headline font-bold text-lg text-primary">AI Booking</span>
             </div>
-            <span class="font-headline font-bold text-lg text-primary">AI Booking</span>
-            <button class="md:hidden ml-auto text-on-surface-variant" onclick="toggleDrawer()">
+            <!-- Tasto Chiudi (Solo Mobile) -->
+            <button class="md:hidden text-on-surface-variant" onclick="toggleSidebar()">
                 <span class="material-symbols-outlined">close</span>
             </button>
         </div>
 
-        <!-- Nav Links -->
-        <nav class="flex-1 p-4 space-y-1 overflow-y-auto">
-            <a href="/dashboard" class="flex items-center gap-3 px-3 py-2.5 bg-surface-container-low text-primary rounded-lg font-medium transition-colors">
+        <!-- Menu Links -->
+        <nav class="flex-1 p-4 space-y-2 overflow-y-auto">
+            <a href="/dashboard" class="flex items-center gap-3 px-3 py-3 bg-surface-container-low text-primary rounded-lg font-medium">
                 <span class="material-symbols-outlined">dashboard</span> Dashboard
             </a>
-            <a href="/agenda" class="flex items-center gap-3 px-3 py-2.5 text-on-surface-variant hover:bg-surface-container-low hover:text-primary rounded-lg font-medium transition-colors">
+            <a href="/agenda" class="flex items-center gap-3 px-3 py-3 text-on-surface-variant hover:bg-surface-container-low hover:text-primary rounded-lg font-medium transition-colors">
                 <span class="material-symbols-outlined">calendar_month</span> Agenda
             </a>
-            <a href="#" class="flex items-center gap-3 px-3 py-2.5 text-on-surface-variant hover:bg-surface-container-low hover:text-primary rounded-lg font-medium transition-colors">
-                <span class="material-symbols-outlined">group</span> Clienti
-            </a>
-            <a href="/statistiche" class="flex items-center gap-3 px-3 py-2.5 text-on-surface-variant hover:bg-surface-container-low hover:text-primary rounded-lg font-medium transition-colors">
-                <span class="material-symbols-outlined">analytics</span> Statistiche
-            </a>
-            <a href="/configurazione" class="flex items-center gap-3 px-3 py-2.5 text-on-surface-variant hover:bg-surface-container-low hover:text-primary rounded-lg font-medium transition-colors">
+            <a href="/configurazione" class="flex items-center gap-3 px-3 py-3 text-on-surface-variant hover:bg-surface-container-low hover:text-primary rounded-lg font-medium transition-colors">
                 <span class="material-symbols-outlined">settings</span> Configurazione
+            </a>
+            <a href="/statistiche" class="flex items-center gap-3 px-3 py-3 text-on-surface-variant hover:bg-surface-container-low hover:text-primary rounded-lg font-medium transition-colors">
+                <span class="material-symbols-outlined">analytics</span> Statistiche
             </a>
         </nav>
 
-        <!-- Footer Nav -->
-        <div class="p-4 border-t border-outline-variant space-y-1">
-            <a href="#" class="flex items-center gap-3 px-3 py-2.5 text-on-surface-variant hover:bg-surface-container-low rounded-lg font-medium">
-                <span class="material-symbols-outlined">help</span> Supporto
-            </a>
-            <a href="/" class="flex items-center gap-3 px-3 py-2.5 text-error hover:bg-red-50 rounded-lg font-medium">
+        <!-- Footer -->
+        <div class="p-4 border-t border-outline-variant">
+            <a href="/" class="flex items-center gap-3 px-3 py-3 text-error hover:bg-red-50 rounded-lg font-medium">
                 <span class="material-symbols-outlined">logout</span> Esci
             </a>
         </div>
     </aside>
 
-    <!-- Main Content -->
-    <main class="flex-1 flex flex-col h-screen overflow-hidden">
-        <!-- Top Header (Mobile Only Trigger + Desktop Info) -->
-        <header class="h-16 bg-white border-b border-outline-variant flex items-center justify-between px-4 md:px-8 shrink-0">
+    <!-- MAIN CONTENT -->
+    <main class="flex-1 flex flex-col h-screen overflow-hidden relative">
+        <!-- Top Header -->
+        <header class="h-16 bg-white border-b border-outline-variant flex items-center justify-between px-4 md:px-8 shrink-0 z-30">
             <div class="flex items-center gap-4">
-                <button class="md:hidden text-on-surface-variant" onclick="toggleDrawer()">
+                <!-- Tasto Menu (Solo Mobile) -->
+                <button class="md:hidden text-on-surface-variant" onclick="toggleSidebar()">
                     <span class="material-symbols-outlined">menu</span>
                 </button>
                 <h1 class="font-headline text-xl font-bold text-on-surface hidden md:block">Benvenuto, Dottore</h1>
@@ -113,264 +95,205 @@
                     <p class="text-sm font-semibold text-on-surface">Dott. Rossi</p>
                     <p class="text-xs text-on-surface-variant">Specialista</p>
                 </div>
-                <div class="w-10 h-10 rounded-full bg-surface-container-high flex items-center justify-center text-primary font-bold border border-outline-variant">
+                <div class="w-10 h-10 rounded-full bg-surface-container-low flex items-center justify-center text-primary font-bold border border-outline-variant">
                     DR
                 </div>
             </div>
         </header>
 
-        <!-- Scrollable Content -->
+        <!-- Scrollable Area -->
         <div class="flex-1 overflow-y-auto p-4 md:p-8">
-            
-            <!-- Mobile Title -->
             <div class="md:hidden mb-6">
                 <h1 class="font-headline text-2xl font-bold text-on-surface">Benvenuto, Dottore</h1>
-                <p class="text-on-surface-variant mt-1">Panoramica attività di oggi.</p>
+                <p class="text-on-surface-variant mt-1">Panoramica attività.</p>
             </div>
 
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 
-                <!-- Left Column: Calendar & Stats -->
+                <!-- Colonna Sinistra: Calendario -->
                 <div class="lg:col-span-1 space-y-6">
-                    <!-- Calendar Widget -->
                     <div class="bg-surface-card rounded-xl border border-outline-variant p-4 shadow-sm">
                         <div class="flex justify-between items-center mb-4">
-                            <h3 class="font-headline font-semibold text-lg" id="calendar-month-year">Caricamento...</h3>
+                            <h3 class="font-headline font-semibold text-lg" id="calendar-month-year">...</h3>
                             <div class="flex gap-1">
                                 <button onclick="changeMonth(-1)" class="p-1 hover:bg-surface-container-low rounded-full"><span class="material-symbols-outlined text-sm">chevron_left</span></button>
                                 <button onclick="changeMonth(1)" class="p-1 hover:bg-surface-container-low rounded-full"><span class="material-symbols-outlined text-sm">chevron_right</span></button>
                             </div>
                         </div>
                         
-                        <!-- Days Header -->
                         <div class="grid grid-cols-7 text-center text-xs font-medium text-on-surface-variant mb-2">
                             <div>Lun</div><div>Mar</div><div>Mer</div><div>Gio</div><div>Ven</div><div>Sab</div><div>Dom</div>
                         </div>
                         
-                        <!-- Days Grid -->
-                        <div id="calendar-grid" class="grid grid-cols-7 gap-1 text-center text-sm">
-                            <!-- Generated by JS -->
-                        </div>
-
-                        <div class="mt-4 pt-4 border-t border-outline-variant">
-                            <div class="flex items-center gap-2 text-xs text-on-surface-variant">
-                                <span class="w-2 h-2 rounded-full bg-primary"></span> Oggi
-                                <span class="w-2 h-2 rounded-full bg-blue-200 ml-2"></span> Appuntamenti
-                            </div>
-                        </div>
+                        <div id="calendar-grid" class="grid grid-cols-7 gap-1 text-center text-sm"></div>
                     </div>
 
-                    <!-- Quick Stats -->
+                    <!-- Stats Rapide -->
                     <div class="bg-surface-card rounded-xl border border-outline-variant p-4 shadow-sm">
                         <h3 class="font-headline font-semibold text-lg mb-4">Riepilogo Giorno</h3>
                         <div class="space-y-3">
-                            <div class="flex justify-between items-center">
-                                <span class="text-on-surface-variant text-sm">Appuntamenti Totali</span>
+                            <div class="flex justify-between">
+                                <span class="text-on-surface-variant text-sm">Totale</span>
                                 <span class="font-bold text-lg" id="stat-total">-</span>
                             </div>
-                            <div class="flex justify-between items-center">
+                            <div class="flex justify-between">
                                 <span class="text-on-surface-variant text-sm">Confermati</span>
                                 <span class="font-bold text-status-confirmed-text" id="stat-confirmed">-</span>
-                            </div>
-                            <div class="flex justify-between items-center">
-                                <span class="text-on-surface-variant text-sm">In Attesa</span>
-                                <span class="font-bold text-status-pending-text" id="stat-pending">-</span>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Right Column: Appointments List -->
-                <div class="lg:col-span-2 bg-surface-card rounded-xl border border-outline-variant shadow-sm flex flex-col h-full">
+                <!-- Colonna Destra: Tabella -->
+                <div class="lg:col-span-2 bg-surface-card rounded-xl border border-outline-variant shadow-sm flex flex-col">
                     <div class="p-4 border-b border-outline-variant flex justify-between items-center">
                         <h3 class="font-headline font-semibold text-lg">Appuntamenti del <span id="selected-date-label">...</span></h3>
-                        <button class="text-primary text-sm font-medium hover:underline flex items-center gap-1">
-                            Vedi tutti <span class="material-symbols-outlined text-xs">arrow_forward</span>
-                        </button>
                     </div>
-                    
                     <div class="overflow-x-auto flex-1">
-                        <table class="w-full text-left border-collapse">
+                        <table class="w-full text-left">
                             <thead class="bg-surface-page text-xs uppercase text-on-surface-variant font-semibold">
                                 <tr>
                                     <th class="p-4">Orario</th>
                                     <th class="p-4">Cliente</th>
-                                    <th class="p-4 hidden sm:table-cell">Servizio</th>
                                     <th class="p-4 text-center">Stato</th>
-                                    <th class="p-4 text-right">Azioni</th>
                                 </tr>
                             </thead>
                             <tbody id="appointments-table-body" class="text-sm divide-y divide-outline-variant">
-                                <!-- Rows generated by JS -->
-                                <tr>
-                                    <td colspan="5" class="p-8 text-center text-on-surface-variant">Caricamento appuntamenti...</td>
-                                </tr>
+                                <tr><td colspan="3" class="p-8 text-center text-on-surface-variant">Caricamento...</td></tr>
                             </tbody>
                         </table>
                     </div>
                 </div>
-
             </div>
         </div>
     </main>
 
     <script>
-        // --- State Management ---
-        let currentDate = new Date();
-        let selectedDate = new Date();
-        let allAppointments = [];
-
-        // --- Mobile Drawer Logic ---
-        function toggleDrawer() {
-            const drawer = document.getElementById('mobile-drawer');
+        // --- 1. SIDEBAR LOGIC ---
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
             const overlay = document.getElementById('overlay');
             
-            if (drawer.classList.contains('drawer-closed')) {
-                drawer.classList.remove('drawer-closed');
-                drawer.classList.add('drawer-open');
+            if (sidebar.classList.contains('sidebar-closed')) {
+                sidebar.classList.remove('sidebar-closed');
+                sidebar.classList.add('sidebar-open');
                 overlay.classList.remove('hidden');
             } else {
-                drawer.classList.remove('drawer-open');
-                drawer.classList.add('drawer-closed');
+                sidebar.classList.remove('sidebar-open');
+                sidebar.classList.add('sidebar-closed');
                 overlay.classList.add('hidden');
             }
         }
 
-        // --- Calendar Logic ---
+        // --- 2. DATE LOGIC (FIXED TIMEZONE BUG) ---
+        let currentMonthDate = new Date();
+        let selectedDateStr = ""; // Stringa YYYY-MM-DD
+
+        function initDate() {
+            const now = new Date();
+            // Calcola la stringa data locale corretta (YYYY-MM-DD) senza fusi orari
+            const year = now.getFullYear();
+            const month = String(now.getMonth() + 1).padStart(2, '0');
+            const day = String(now.getDate()).padStart(2, '0');
+            selectedDateStr = `${year}-${month}-${day}`;
+            renderCalendar();
+        }
+
         function renderCalendar() {
             const grid = document.getElementById('calendar-grid');
-            const monthLabel = document.getElementById('calendar-month-year');
-            
-            const year = currentDate.getFullYear();
-            const month = currentDate.getMonth();
-            
-            monthLabel.textContent = new Intl.DateTimeFormat('it-IT', { month: 'long', year: 'numeric' }).format(currentDate);
-            
+            const label = document.getElementById('calendar-month-year');
+            const year = currentMonthDate.getFullYear();
+            const month = currentMonthDate.getMonth();
+
+            label.textContent = new Intl.DateTimeFormat('it-IT', { month: 'long', year: 'numeric' }).format(currentMonthDate);
             grid.innerHTML = '';
-            
-            // First day of month (0 = Sunday, adjust for Monday start)
-            let firstDay = new Date(year, month, 1).getDay();
-            firstDay = firstDay === 0 ? 6 : firstDay - 1; // Make Monday 0
-            
+
+            // Primo giorno del mese
+            let firstDayIndex = new Date(year, month, 1).getDay();
+            firstDayIndex = firstDayIndex === 0 ? 6 : firstDayIndex - 1; // Lunedì = 0
+
             const daysInMonth = new Date(year, month + 1, 0).getDate();
-            const today = new Date();
-            
-            // Empty slots for prev month
-            for (let i = 0; i < firstDay; i++) {
-                grid.innerHTML += `<div class="h-8"></div>`;
-            }
-            
-            // Days
-            for (let day = 1; day <= daysInMonth; day++) {
-                const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
-                const isToday = day === today.getDate() && month === today.getMonth() && year === today.getFullYear();
-                const isSelected = dateStr === selectedDate.toISOString().split('T')[0];
-                
+            const todayStr = new Date().toISOString().split('T')[0];
+
+            // Spazi vuoti
+            for (let i = 0; i < firstDayIndex; i++) grid.innerHTML += '<div></div>';
+
+            // Giorni
+            for (let d = 1; d <= daysInMonth; d++) {
+                const mStr = String(month + 1).padStart(2, '0');
+                const dStr = String(d).padStart(2, '0');
+                const dateStr = `${year}-${mStr}-${dStr}`;
+
+                const isToday = dateStr === todayStr;
+                const isSelected = dateStr === selectedDateStr;
+
                 let classes = "h-8 flex items-center justify-center rounded-lg cursor-pointer transition-colors relative ";
                 if (isSelected) classes += "bg-primary text-white font-bold shadow-md ";
                 else if (isToday) classes += "bg-surface-container-low text-primary font-bold border border-primary ";
                 else classes += "hover:bg-surface-container-low text-on-surface ";
-                
-                // Check appointments count for badge
-                const count = allAppointments.filter(a => a.date && a.date.startsWith(dateStr)).length;
-                const badge = count > 0 && !isSelected ? `<span class="absolute bottom-1 w-1 h-1 bg-blue-400 rounded-full"></span>` : '';
 
-                grid.innerHTML += `<div class="${classes}" onclick="selectDate('${dateStr}')">${day}${badge}</div>`;
+                grid.innerHTML += `<div class="${classes}" onclick="selectDate('${dateStr}')">${d}</div>`;
             }
             
-            updateStats();
-            renderTable();
+            loadAppointments();
         }
 
         function changeMonth(delta) {
-            currentDate.setMonth(currentDate.getMonth() + delta);
+            currentMonthDate.setMonth(currentMonthDate.getMonth() + delta);
             renderCalendar();
         }
 
         function selectDate(dateStr) {
-            selectedDate = new Date(dateStr + 'T00:00:00'); 
+            selectedDateStr = dateStr;
             renderCalendar();
         }
 
-        // --- Data Fetching ---
-        async function fetchAppointments() {
+        // --- 3. DATA FETCHING ---
+        async function loadAppointments() {
+            const tbody = document.getElementById('appointments-table-body');
+            const statsTotal = document.getElementById('stat-total');
+            const statsConf = document.getElementById('stat-confirmed');
+            const dateLabel = document.getElementById('selected-date-label');
+
+            // Formatta etichetta data
+            const [y, m, d] = selectedDateStr.split('-');
+            const dateObj = new Date(y, parseInt(m)-1, d);
+            dateLabel.textContent = dateObj.toLocaleDateString('it-IT', { weekday: 'long', day: 'numeric', month: 'long' });
+
             try {
                 const res = await fetch('/api/appointments');
-                if (!res.ok) throw new Error('Network response was not ok');
-                allAppointments = await res.json();
-                renderCalendar();
-            } catch (error) {
-                console.error('Errore fetch appuntamenti:', error);
-                // Fallback per demo se API fallisce
-                allAppointments = []; 
-                renderCalendar();
-            }
-        }
-
-        // --- Rendering Table & Stats ---
-        function updateStats() {
-            const dateStr = selectedDate.toISOString().split('T')[0];
-            const daysApps = allAppointments.filter(a => a.date && a.date.startsWith(dateStr));
-            
-            document.getElementById('stat-total').textContent = daysApps.length;
-            document.getElementById('stat-confirmed').textContent = daysApps.filter(a => a.status === 'confirmed').length;
-            document.getElementById('stat-pending').textContent = daysApps.filter(a => a.status === 'pending').length;
-            
-            const options = { weekday: 'long', day: 'numeric', month: 'long' };
-            document.getElementById('selected-date-label').textContent = selectedDate.toLocaleDateString('it-IT', options);
-        }
-
-        function renderTable() {
-            const tbody = document.getElementById('appointments-table-body');
-            const dateStr = selectedDate.toISOString().split('T')[0];
-            
-            const daysApps = allAppointments
-                .filter(a => a.date && a.date.startsWith(dateStr))
-                .sort((a, b) => a.time.localeCompare(b.time));
-            
-            if (daysApps.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="5" class="p-8 text-center text-on-surface-variant">Nessun appuntamento per questa data.</td></tr>`;
-                return;
-            }
-
-            tbody.innerHTML = daysApps.map(app => {
-                let statusClass = "";
-                let statusText = "";
+                const allData = await res.json();
                 
-                switch(app.status) {
-                    case 'confirmed': statusClass = "bg-status-confirmed-bg text-status-confirmed-text"; statusText = "Confermato"; break;
-                    case 'pending': statusClass = "bg-status-pending-bg text-status-pending-text"; statusText = "In Attesa"; break;
-                    case 'cancelled': statusClass = "bg-status-cancelled-bg text-status-cancelled-text"; statusText = "Cancellato"; break;
-                    default: statusClass = "bg-gray-100 text-gray-600"; statusText = app.status || 'Bozza';
+                // Filtra per data selezionata
+                const daysApps = allData.filter(a => a.date === selectedDateStr);
+                
+                statsTotal.textContent = daysApps.length;
+                statsConf.textContent = daysApps.filter(a => a.status === 'confirmed').length;
+
+                if (daysApps.length === 0) {
+                    tbody.innerHTML = `<tr><td colspan="3" class="p-8 text-center text-on-surface-variant">Nessun appuntamento per oggi.</td></tr>`;
+                    return;
                 }
 
-                const initials = (app.client_name || "CL").substring(0, 2).toUpperCase();
+                tbody.innerHTML = daysApps.sort((a,b) => a.time.localeCompare(b.time)).map(app => {
+                    const statusClass = app.status === 'confirmed' ? 'bg-status-confirmed-bg text-status-confirmed-text' : 'bg-status-pending-bg text-status-pending-text';
+                    const statusText = app.status === 'confirmed' ? 'Confermato' : 'In Attesa';
+                    return `
+                    <tr class="hover:bg-surface-container-low">
+                        <td class="p-4 font-medium">${app.time}</td>
+                        <td class="p-4 font-semibold">${app.client_name}</td>
+                        <td class="p-4 text-center"><span class="inline-block px-2 py-1 rounded text-xs font-bold uppercase ${statusClass}">${statusText}</span></td>
+                    </tr>`;
+                }).join('');
 
-                return `
-                <tr class="hover:bg-surface-container-low transition-colors group">
-                    <td class="p-4 font-medium text-on-surface">${app.time || '--:--'}</td>
-                    <td class="p-4">
-                        <div class="flex items-center gap-3">
-                            <div class="w-8 h-8 rounded-full bg-surface-container-high flex items-center justify-center text-xs font-bold text-on-surface-variant">${initials}</div>
-                            <span class="font-medium text-on-surface">${app.client_name || 'Cliente'}</span>
-                        </div>
-                    </td>
-                    <td class="p-4 text-on-surface-variant hidden sm:table-cell">${app.service || '-'}</td>
-                    <td class="p-4 text-center">
-                        <span class="inline-flex items-center px-2 py-1 rounded text-xs font-bold uppercase ${statusClass}">${statusText}</span>
-                    </td>
-                    <td class="p-4 text-right">
-                        <button class="p-2 text-on-surface-variant hover:text-primary hover:bg-surface-container-low rounded-lg opacity-0 group-hover:opacity-100 transition-opacity">
-                            <span class="material-symbols-outlined text-sm">more_vert</span>
-                        </button>
-                    </td>
-                </tr>
-                `;
-            }).join('');
+            } catch (err) {
+                console.error(err);
+                tbody.innerHTML = `<tr><td colspan="3" class="p-4 text-center text-red-500">Errore caricamento dati API</td></tr>`;
+            }
         }
 
-        // Init
-        fetchAppointments();
+        // Avvio
+        initDate();
     </script>
 </body>
 </html>
