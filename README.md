@@ -1,139 +1,181 @@
-# Agente di prenotazione WhatsApp
+# WhatsApp Booking Agent con AI e State Machine
 
-Applicazione Node.js/Express che implementa il flusso conversazionale del
-diagramma fornito: un paziente scrive su WhatsApp, un LLM estrae
-intent/entità, il sistema cerca disponibilità nel calendario dello studio
-applicando le regole configurate, propone i primi slot e gestisce
-accettazione, rifiuto o nuove preferenze — con timeout e cicli massimi.
+Sistema di prenotazione appuntamenti via WhatsApp con assistente AI, state machine conversazionale e pannello di gestione per studi medici/professionisti.
 
-Include una **landing page di configurazione** (`/admin`, alias `/`) dove il
-medico/lo studio inserisce le proprie indicazioni — orari, servizi,
-esclusioni, regole di prenotazione, testi dei messaggi — con un'anteprima
-live di come risponderà il bot.
+## Caratteristiche
+
+- **Assistente WhatsApp AI**: Gestisce prenotazioni in linguaggio naturale usando LLM (OpenAI GPT)
+- **State Machine Conversazionale**: Flusso strutturato con gestione stati (INFO, BOOKING, WAITING_REPLY, ecc.)
+- **Calendario Intelligente**: Generazione slot basata su orari, servizi ed esclusioni configurate
+- **Pannello Configurazione**: Interfaccia web per impostare orari, servizi, messaggi e regole
+- **Agenda con Calendario**: Visualizzazione appuntamenti con calendario interattivo e modifica orari lavorativi
+- **Multi-tenant Ready**: Architettura predisposta per più studi (attualmente singolo tenant)
 
 ## Struttura
 
 ```
-server.js                    # entry point Express
-src/
-  config/store.js            # lettura/scrittura configurazione studio (JSON su Supabase)
-  context/store.js           # CONVERSATION CONTEXT + timer dei 10 minuti
-  llm/
-    intentExtraction.js      # blocco LLM: intent + entità
-    interpretReply.js        # blocco INTERPRET: ACCETTA/RIFIUTA/NUOVE_PREFERENZE
-  chrono/normalize.js        # blocco CHRONO: normalizzazione date
-  rules/engine.js            # Business Rules Engine (orari, durata, esclusioni)
-  calendar/
-    search.js                # blocco CALENDAR: ricerca slot
-    bookingsStore.js         # appuntamenti confermati (Supabase)
-  whatsapp/client.js         # invio messaggi via Meta Cloud API (Graph API)
-  flow/handler.js            # orchestratore: implementa l'intero flowchart
-  supabase/
-    client.js                # client Supabase condiviso (service role key)
-  routes/
-    webhook.js               # GET/POST /webhook/whatsapp (Meta Cloud API)
-    admin.js                 # API di configurazione e agenda usate dal pannello
-public/
-  index.html                 # pannello di configurazione (+ anteprima chat)
-  agenda.html                # agenda appuntamenti per il tenant
+├── server.js                 # Server Express principale
+├── public/
+│   ├── index.html           # Pannello configurazione
+│   └── agenda.html          # Agenda con calendario
+├── src/
+│   ├── calendar/            # Gestione calendario e slot
+│   ├── chrono/              # Normalizzazione date
+│   ├── config/              # Store configurazione
+│   ├── context/             # Context conversazioni
+│   ├── flow/                # State machine handler
+│   ├── llm/                 # Client OpenAI e interpretazione
+│   ├── routes/              # Route webhook e API admin
+│   ├── rules/               # Motore regole
+│   ├── supabase/            # Client Supabase
+│   └── whatsapp/            # Client WhatsApp API
+├── supabase/
+│   └── schema.sql           # Schema database
+├── render.yaml              # Configurazione deploy Render
+└── .env.example             # Template variabili ambiente
 ```
-
-## Come funziona il flusso (mappatura sul diagramma)
-
-1. **MSG/TIME** → il webhook riceve il messaggio Twilio con timestamp.
-2. **LLM** → `extractIntent` classifica `BOOKING | INFO | ALTRO` ed estrae
-   data, ora, periodo, servizio, nome.
-3. **INFO/ALTRO** → risposte dirette basate sulla configurazione dello studio.
-4. **BOOKING** → `CHRONO` normalizza la data (`chrono-node`), il contesto
-   viene aggiornato, si verifica il **LIMIT** (`search_days`).
-5. **CALENDAR + RULES** → `searchAvailableSlots` genera gli slot liberi
-   rispettando orari di apertura, durata servizio, esclusioni ed escludendo
-   gli slot già rifiutati.
-6. **FOUND** → se non ci sono slot, invito a contattare lo studio; altrimenti
-   **OFFER** dei primi `first_offer_slots` e stato `WAITING_REPLY` con timer
-   `reply_timeout_minutes`.
-7. **REPLY/INTERPRET/CHOICE** → alla risposta (o allo scadere del timer),
-   `interpretReply` classifica `ACCETTA | RIFIUTA | NUOVE_PREFERENZE`:
-   - `ACCETTA` → **VERIFY** disponibilità → **CREATE** appuntamento e
-     **CONFIRM**, oppure nuova ricerca se lo slot è appena stato occupato.
-   - `RIFIUTA` → slot salvati come rifiutati, **CYCLE** incrementato,
-     controllo **MAX** cicli, poi nuova ricerca o messaggio di chiusura.
-   - `NUOVE_PREFERENZE` → si torna a `CHRONO` con le nuove preferenze.
-
-## Configurazione locale
-
-```bash
-npm install
-cp .env.example .env   # compila le chiavi (opzionale, su Render usa le Environment Variables)
-npm run dev
-```
-
-Apri `http://localhost:3000/` per configurare lo studio (password definita in `ADMIN_PASSWORD`, lasciare vuota per accesso libero in sviluppo). Visita `/agenda` per vedere gli appuntamenti.
-
-## Variabili d'ambiente
-
-Tutte le chiavi vanno impostate come variabili d'ambiente. In sviluppo locale puoi usare un file `.env`, mentre su Render le inserisci direttamente nella sezione **Environment** del dashboard. Ecco le variabili richieste:
-
-| Variabile | Descrizione |
-|-----------|-------------|
-| `SUPABASE_URL` | URL del tuo progetto Supabase (es. `https://xyz.supabase.co`) |
-| `SUPABASE_SERVICE_ROLE_KEY` | Service Role Key di Supabase (la trovi in Settings > API) |
-| `STUDIO_ID` | ID dello studio (lascia `default` per singolo tenant) |
-| `ADMIN_PASSWORD` | Password per accedere al pannello admin e all'agenda |
-| `WHATSAPP_PHONE_NUMBER_ID` | Phone Number ID della WhatsApp Business API |
-| `WHATSAPP_BUSINESS_ACCOUNT_ID` | Business Account ID (opzionale) |
-| `WHATSAPP_ACCESS_TOKEN` | Token di accesso permanente per la WhatsApp API |
-| `WHATSAPP_VERIFY_TOKEN` | Token segreto per verificare il webhook (sceglilo tu) |
-| `OPENAI_API_KEY` | Chiave API OpenAI per l'LLM |
-| `PORT` | Porta del server (opzionale, default 3000) |
-
-## Collegare WhatsApp (Meta Cloud API)
-
-Nessun intermediario: il bot parla direttamente con la WhatsApp Business
-Platform di Meta.
-
-1. Crea un'app su [developers.facebook.com](https://developers.facebook.com/apps)
-   e aggiungi il prodotto **WhatsApp**.
-2. Nella sezione WhatsApp > API Setup trovi un **numero di test** già pronto
-   (per iniziare subito) e il suo **Phone Number ID**: valorizza
-   `WHATSAPP_PHONE_NUMBER_ID`. Genera un **token di accesso** (temporaneo per
-   i test, permanente creando un System User in Business Manager per la
-   produzione): valorizza `WHATSAPP_TOKEN`.
-3. Scegli tu una stringa segreta a piacere per `WHATSAPP_VERIFY_TOKEN`.
-4. Fai il deploy (vedi sotto), poi in **WhatsApp > Configuration** imposta:
-   - **Callback URL**: `https://<tuo-dominio-render>/webhook/whatsapp`
-   - **Verify token**: lo stesso valore di `WHATSAPP_VERIFY_TOKEN`
-   Meta chiama questa URL in GET per verificarla: il server risponde in
-   automatico se i due token coincidono.
-5. In **Webhook fields**, iscriviti al campo `messages`.
-6. Per uscire dal numero di test e usare il tuo numero business reale,
-   completa la verifica dell'azienda in Meta Business Manager e aggiungi il
-   numero in WhatsApp > API Setup.
-
-Nota: con il numero di test, Meta consente di scrivere solo a numeri
-aggiunti manualmente come destinatari "Allowed" nella dashboard, finché non
-verifichi l'azienda.
 
 ## Deploy su Render
 
-1. Carica questo repository su GitHub.
-2. Su Render: **New → Blueprint**, seleziona il repo (usa `render.yaml`)
-   oppure crea manualmente un **Web Service**:
-   - Build command: `npm install`
-   - Start command: `npm start`
-3. Imposta le variabili d'ambiente nella sezione **Environment** del dashboard di Render (vedi tabella sopra per l'elenco completo):
-   - `SUPABASE_URL` e `SUPABASE_SERVICE_ROLE_KEY` (obbligatori per salvare configurazione e appuntamenti)
-   - `ADMIN_PASSWORD` (password per accedere al pannello)
-   - `OPENAI_API_KEY`
-   - `WHATSAPP_ACCESS_TOKEN`, `WHATSAPP_PHONE_NUMBER_ID`, `WHATSAPP_VERIFY_TOKEN`
-4. Una volta online, apri `/` per configurare lo studio, `/agenda` per vedere gli appuntamenti, e collega il webhook Meta all'URL pubblico come descritto sopra.
+### 1. Prepara il Database Supabase
 
-**Nota importante:** Non serve un file `.env` su Render — tutte le variabili vanno inserite direttamente nella sezione Environment del servizio. Il codice legge automaticamente da `process.env`.
+1. Crea un progetto su [supabase.com](https://supabase.com)
+2. Vai su SQL Editor ed esegui lo script in `supabase/schema.sql`
+3. Copia:
+   - **Project URL** (Settings > General)
+   - **Service Role Key** (Settings > API)
 
-## Note su calendario e LLM
+### 2. Configura WhatsApp Business API
 
-- Il calendario usa **Supabase** (`src/calendar/bookingsStore.js`) per salvare gli appuntamenti in modo persistente. La tabella `appointments` viene creata eseguendo lo script SQL in `supabase/schema.sql` nell'editor SQL di Supabase.
-- La configurazione dello studio è salvata nella tabella `studio_config` (sempre su Supabase), quindi sopravvive ai redeploy senza bisogno di dischi persistenti.
-- L'estrazione di intent/entità e l'interpretazione delle risposte usano
-  l'API OpenAI (`OPENAI_API_KEY`). I prompt forzano una risposta in
-  solo JSON per semplificare il parsing.
+1. Crea un'app su [Meta for Developers](https://developers.facebook.com)
+2. Aggiungi prodotto WhatsApp
+3. Ottieni:
+   - **Access Token** (WhatsApp > API Setup)
+   - **Phone Number ID** (WhatsApp > API Setup)
+   - **Verify Token** (creane uno tu per il webhook)
+
+### 3. Deploy su Render
+
+1. Crea nuovo servizio **Web Service** su [render.com](https://render.com)
+2. Connetti il repository GitHub
+3. Imposta:
+   - **Build Command**: `npm install`
+   - **Start Command**: `npm start`
+4. Aggiungi tutte le variabili d'ambiente dalla sezione **Environment**:
+
+| Chiave | Valore |
+|--------|--------|
+| `PORT` | `3000` |
+| `ADMIN_PASSWORD` | La tua password sicura |
+| `OPENAI_API_KEY` | `sk-...` (da platform.openai.com) |
+| `OPENAI_MODEL` | `gpt-4o-mini` |
+| `WHATSAPP_ACCESS_TOKEN` | `EAA...` |
+| `WHATSAPP_PHONE_NUMBER_ID` | ID numerico |
+| `WHATSAPP_VERIFY_TOKEN` | Il tuo token segreto |
+| `SUPABASE_URL` | `https://...supabase.co` |
+| `SUPABASE_SERVICE_ROLE_KEY` | `eyJhbG...` |
+| `STUDIO_ID` | `default` |
+
+5. Deploy!
+
+### 4. Configura Webhook WhatsApp
+
+1. Nel dashboard Meta WhatsApp, imposta:
+   - **Callback URL**: `https://tuioapp.onrender.com/webhook/whatsapp`
+   - **Verify Token**: Quello configurato in `WHATSAPP_VERIFY_TOKEN`
+2. Sottoscrivi gli eventi: `messages`, `message_template_status_update`
+
+## Utilizzo
+
+### Pannello Configurazione (`/`)
+
+Accedi con la password impostata in `ADMIN_PASSWORD` per:
+- Configurare informazioni studio (nome, indirizzo, telefono)
+- Definire servizi e durate
+- Impostare orari di apertura giornalieri
+- Aggiungere esclusioni (ferie, festività)
+- Personalizzare messaggi del bot
+- Regolare parametri prenotazione (giorni ricercabili, timeout, ecc.)
+
+### Agenda (`/agenda`)
+
+Visualizza e gestisci gli appuntamenti:
+- **Tab Calendario**: Vista mensile con indicatori visivi
+  - Giorni chiusi (weekend/esclusioni/orari vuoti)
+  - Giorni con appuntamenti
+  - Click su un giorno per filtrare la lista
+  - Pulsante "Modifica Orari Lavorativi" per cambiare giorni/orari
+- **Tab Lista Appuntamenti**: Tabella dettagliata con filtri data
+  - Statistiche (oggi, settimana, totale)
+  - Filtri per intervallo date
+  - Dettagli: data, ora, paziente, telefono, servizio
+
+### Flusso WhatsApp
+
+Il bot gestisce tre intenti principali:
+1. **INFO**: Risponde con orari, indirizzo e servizi
+2. **BOOKING**: Guida l'utente nella prenotazione
+3. **ALTRO**: Reindirizza verso INFO o BOOKING
+
+Durante il booking:
+- Estrae preferenze (data, periodo, servizio, nome)
+- Cerca slot disponibili nel calendario
+- Propone fino a N slot (configurabile)
+- Attende risposta con timeout
+- Conferma o ripropone in base alla scelta
+
+## Troubleshooting
+
+### Il bot non salva appuntamenti su Supabase
+
+1. Verifica che `SUPABASE_URL` e `SUPABASE_SERVICE_ROLE_KEY` siano corretti in Environment
+2. Controlla i log su Render per errori di connessione
+3. Assicurati che lo schema SQL sia stato eseguito correttamente
+4. Verifica che la tabella `appointments` esista
+
+### Webhook non riceve messaggi
+
+1. Controlla che l'URL callback su Meta sia corretto (https, nessun trailing slash extra)
+2. Verifica che `WHATSAPP_VERIFY_TOKEN` corrisponda esattamente
+3. Controlla i log Render per richieste in arrivo (`/webhook/whatsapp`)
+4. Assicurati che gli eventi `messages` siano sottoscritti
+
+### Errori LLM / OpenAI
+
+1. Verifica che `OPENAI_API_KEY` sia valida e abbia credito
+2. Controlla i limiti rate dell'API
+3. Vedi i log per errori specifici
+
+## Sviluppo Locale
+
+```bash
+# Clona e installa
+git clone <repo>
+cd whatsapp-booking-agent
+npm install
+
+# Crea .env locale
+cp .env.example .env
+# Modifica .env con le tue chiavi
+
+# Avvia server
+npm start
+
+# Accedi a:
+# - http://localhost:3000 (configurazione)
+# - http://localhost:3000/agenda (agenda)
+# - POST http://localhost:3000/webhook/whatsapp (webhook)
+```
+
+## Stack Tecnologico
+
+- **Backend**: Node.js, Express
+- **Database**: Supabase (PostgreSQL)
+- **AI**: OpenAI GPT-4o-mini
+- **WhatsApp**: Meta Cloud API
+- **Frontend**: HTML5, CSS3, Vanilla JS
+- **Deploy**: Render
+
+## License
+
+MIT
