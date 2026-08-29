@@ -1,23 +1,21 @@
 {
-  "name": "whatsapp-booking-agent",
+  "name": "whatsapp-ai-booking",
   "version": "1.0.0",
-  "description": "Agente di prenotazione WhatsApp per studi medici, con pannello di configurazione (landing page) e motore conversazionale basato su LLM.",
+  "description": "AI WhatsApp Booking System",
   "main": "server.js",
-  "type": "commonjs",
-  "engines": {
-    "node": ">=18.0.0"
-  },
   "scripts": {
     "start": "node server.js",
-    "dev": "node --watch server.js"
+    "dev": "nodemon server.js"
   },
   "dependencies": {
-    "@supabase/supabase-js": "^2.45.4",
-    "body-parser": "^1.20.2",
-    "chrono-node": "^2.7.7",
-    "dotenv": "^16.4.5",
-    "express": "^4.19.2",
-    "nanoid": "^3.3.7",
-    "openai": "^4.63.0"
+    "express": "^4.18.2",
+    "cors": "^2.8.5",
+    "@supabase/supabase-js": "^2.39.0",
+    "dotenv": "^16.3.1",
+    "axios": "^1.6.0",
+    "body-parser": "^1.20.2"
+  },
+  "engines": {
+    "node": ">=18.0.0"
   }
 }
