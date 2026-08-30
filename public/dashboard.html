@@ -4,162 +4,99 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard - AI Booking</title>
-    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Manrope:wght@600;700&display=swap" rel="stylesheet"/>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        "surface-page": "#f9fafb", "primary": "#006194", "on-primary": "#ffffff",
-                        "secondary-container": "#39b8fd", "surface-card": "#ffffff", "outline-variant": "#e5e7eb",
-                        "on-surface": "#151c27", "on-surface-variant": "#3f4850", "surface-container-low": "#f0f3ff",
-                        "status-confirmed-bg": "#f0fdf4", "status-confirmed-text": "#16a34a",
-                        "status-pending-bg": "#fffbeb", "status-pending-text": "#b45309"
-                    },
-                    fontFamily: { body: ["Inter"], headline: ["Manrope"] }
-                }
-            }
-        }
-    </script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined&family=Inter:wght@400;600&family=Manrope:wght@600;700&display=swap" rel="stylesheet"/>
     <style>
-        body { font-family: 'Inter', sans-serif; }
+        body { font-family: 'Inter', sans-serif; background-color: #f9fafb; color: #151c27; }
         h1, h2, h3 { font-family: 'Manrope', sans-serif; }
-        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
-        
-        /* Sidebar Mobile Logic */
-        #sidebar { transition: transform 0.3s ease-in-out; }
-        .sidebar-open { transform: translateX(0) !important; }
-        .sidebar-closed { transform: translateX(-100%) !important; }
+        .material-symbols-outlined { vertical-align: middle; font-size: 20px; }
+        /* Sidebar fissa su desktop, nascosta su mobile di default */
+        .sidebar { display: none; }
+        @media (min-width: 768px) { .sidebar { display: flex; } }
+        .mobile-menu-open { display: flex !important; }
     </style>
 </head>
-<body class="bg-surface-page text-on-surface flex min-h-screen overflow-hidden">
-
-    <!-- Overlay Scuro per Mobile -->
-    <div id="overlay" class="fixed inset-0 bg-black/50 z-40 hidden md:hidden glass" onclick="toggleSidebar()"></div>
+<body class="flex h-screen overflow-hidden">
 
     <!-- SIDEBAR -->
-    <aside id="sidebar" class="fixed md:relative z-50 h-full w-64 bg-white border-r border-outline-variant flex flex-col sidebar-closed md:translate-x-0 shadow-xl md:shadow-none">
-        <!-- Logo -->
-        <div class="h-16 flex items-center justify-between px-6 border-b border-outline-variant bg-white">
-            <div class="flex items-center gap-3">
-                <div class="w-8 h-8 bg-primary rounded-lg flex items-center justify-center text-white">
-                    <span class="material-symbols-outlined text-sm">smart_toy</span>
-                </div>
-                <span class="font-headline font-bold text-lg text-primary">AI Booking</span>
+    <aside id="sidebar" class="sidebar flex-col w-64 bg-white border-r border-gray-200 h-full fixed md:relative z-50 transition-transform transform -translate-x-full md:translate-x-0">
+        <div class="h-16 flex items-center justify-between px-6 border-b border-gray-200">
+            <div class="flex items-center gap-2 text-blue-600 font-bold text-xl">
+                <span class="material-symbols-outlined">smart_toy</span> AI Booking
             </div>
-            <!-- Tasto Chiudi (Solo Mobile) -->
-            <button class="md:hidden text-on-surface-variant" onclick="toggleSidebar()">
-                <span class="material-symbols-outlined">close</span>
-            </button>
+            <!-- Pulsante chiudi solo per mobile -->
+            <button onclick="toggleMenu()" class="md:hidden text-gray-500"><span class="material-symbols-outlined">close</span></button>
         </div>
-
-        <!-- Menu Links -->
         <nav class="flex-1 p-4 space-y-2 overflow-y-auto">
-            <a href="/dashboard" class="flex items-center gap-3 px-3 py-3 bg-surface-container-low text-primary rounded-lg font-medium">
+            <a href="/dashboard" class="flex items-center gap-3 px-4 py-3 bg-blue-50 text-blue-700 rounded-lg font-semibold">
                 <span class="material-symbols-outlined">dashboard</span> Dashboard
             </a>
-            <a href="/agenda" class="flex items-center gap-3 px-3 py-3 text-on-surface-variant hover:bg-surface-container-low hover:text-primary rounded-lg font-medium transition-colors">
+            <a href="/agenda" class="flex items-center gap-3 px-4 py-3 text-gray-600 hover:bg-gray-50 rounded-lg font-medium">
                 <span class="material-symbols-outlined">calendar_month</span> Agenda
             </a>
-            <a href="/configurazione" class="flex items-center gap-3 px-3 py-3 text-on-surface-variant hover:bg-surface-container-low hover:text-primary rounded-lg font-medium transition-colors">
+            <a href="/configurazione" class="flex items-center gap-3 px-4 py-3 text-gray-600 hover:bg-gray-50 rounded-lg font-medium">
                 <span class="material-symbols-outlined">settings</span> Configurazione
             </a>
-            <a href="/statistiche" class="flex items-center gap-3 px-3 py-3 text-on-surface-variant hover:bg-surface-container-low hover:text-primary rounded-lg font-medium transition-colors">
+            <a href="/statistiche" class="flex items-center gap-3 px-4 py-3 text-gray-600 hover:bg-gray-50 rounded-lg font-medium">
                 <span class="material-symbols-outlined">analytics</span> Statistiche
             </a>
         </nav>
-
-        <!-- Footer -->
-        <div class="p-4 border-t border-outline-variant">
-            <a href="/" class="flex items-center gap-3 px-3 py-3 text-error hover:bg-red-50 rounded-lg font-medium">
+        <div class="p-4 border-t border-gray-200">
+            <a href="/" class="flex items-center gap-3 px-4 py-3 text-red-600 hover:bg-red-50 rounded-lg font-medium">
                 <span class="material-symbols-outlined">logout</span> Esci
             </a>
         </div>
     </aside>
 
+    <!-- Overlay Mobile -->
+    <div id="overlay" onclick="toggleMenu()" class="fixed inset-0 bg-black/50 z-40 hidden md:hidden glass"></div>
+
     <!-- MAIN CONTENT -->
-    <main class="flex-1 flex flex-col h-screen overflow-hidden relative">
-        <!-- Top Header -->
-        <header class="h-16 bg-white border-b border-outline-variant flex items-center justify-between px-4 md:px-8 shrink-0 z-30">
+    <main class="flex-1 flex flex-col h-full overflow-hidden relative">
+        <!-- Topbar -->
+        <header class="h-16 bg-white border-b border-gray-200 flex items-center justify-between px-4 md:px-8 shrink-0">
             <div class="flex items-center gap-4">
-                <!-- Tasto Menu (Solo Mobile) -->
-                <button class="md:hidden text-on-surface-variant" onclick="toggleSidebar()">
-                    <span class="material-symbols-outlined">menu</span>
-                </button>
-                <h1 class="font-headline text-xl font-bold text-on-surface hidden md:block">Benvenuto, Dottore</h1>
+                <button onclick="toggleMenu()" class="md:hidden text-gray-600"><span class="material-symbols-outlined">menu</span></button>
+                <h1 class="text-xl font-bold text-gray-900">Benvenuto, Dottore</h1>
             </div>
-            <div class="flex items-center gap-4">
-                <div class="text-right hidden sm:block">
-                    <p class="text-sm font-semibold text-on-surface">Dott. Rossi</p>
-                    <p class="text-xs text-on-surface-variant">Specialista</p>
-                </div>
-                <div class="w-10 h-10 rounded-full bg-surface-container-low flex items-center justify-center text-primary font-bold border border-outline-variant">
-                    DR
-                </div>
-            </div>
+            <div class="w-10 h-10 rounded-full bg-blue-100 text-blue-700 flex items-center justify-center font-bold">DR</div>
         </header>
 
         <!-- Scrollable Area -->
         <div class="flex-1 overflow-y-auto p-4 md:p-8">
-            <div class="md:hidden mb-6">
-                <h1 class="font-headline text-2xl font-bold text-on-surface">Benvenuto, Dottore</h1>
-                <p class="text-on-surface-variant mt-1">Panoramica attività.</p>
-            </div>
-
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 
-                <!-- Colonna Sinistra: Calendario -->
-                <div class="lg:col-span-1 space-y-6">
-                    <div class="bg-surface-card rounded-xl border border-outline-variant p-4 shadow-sm">
-                        <div class="flex justify-between items-center mb-4">
-                            <h3 class="font-headline font-semibold text-lg" id="calendar-month-year">...</h3>
-                            <div class="flex gap-1">
-                                <button onclick="changeMonth(-1)" class="p-1 hover:bg-surface-container-low rounded-full"><span class="material-symbols-outlined text-sm">chevron_left</span></button>
-                                <button onclick="changeMonth(1)" class="p-1 hover:bg-surface-container-low rounded-full"><span class="material-symbols-outlined text-sm">chevron_right</span></button>
-                            </div>
-                        </div>
-                        
-                        <div class="grid grid-cols-7 text-center text-xs font-medium text-on-surface-variant mb-2">
-                            <div>Lun</div><div>Mar</div><div>Mer</div><div>Gio</div><div>Ven</div><div>Sab</div><div>Dom</div>
-                        </div>
-                        
-                        <div id="calendar-grid" class="grid grid-cols-7 gap-1 text-center text-sm"></div>
-                    </div>
-
-                    <!-- Stats Rapide -->
-                    <div class="bg-surface-card rounded-xl border border-outline-variant p-4 shadow-sm">
-                        <h3 class="font-headline font-semibold text-lg mb-4">Riepilogo Giorno</h3>
-                        <div class="space-y-3">
-                            <div class="flex justify-between">
-                                <span class="text-on-surface-variant text-sm">Totale</span>
-                                <span class="font-bold text-lg" id="stat-total">-</span>
-                            </div>
-                            <div class="flex justify-between">
-                                <span class="text-on-surface-variant text-sm">Confermati</span>
-                                <span class="font-bold text-status-confirmed-text" id="stat-confirmed">-</span>
-                            </div>
+                <!-- Calendario -->
+                <div class="lg:col-span-1 bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 id="month-year" class="font-bold text-lg capitalize"></h3>
+                        <div class="flex gap-2">
+                            <button onclick="changeMonth(-1)" class="p-1 hover:bg-gray-100 rounded"><span class="material-symbols-outlined">chevron_left</span></button>
+                            <button onclick="changeMonth(1)" class="p-1 hover:bg-gray-100 rounded"><span class="material-symbols-outlined">chevron_right</span></button>
                         </div>
                     </div>
+                    <div class="grid grid-cols-7 text-center text-xs font-semibold text-gray-500 mb-2">
+                        <div>Lun</div><div>Mar</div><div>Mer</div><div>Gio</div><div>Ven</div><div>Sab</div><div>Dom</div>
+                    </div>
+                    <div id="calendar-grid" class="grid grid-cols-7 gap-1 text-center text-sm"></div>
                 </div>
 
-                <!-- Colonna Destra: Tabella -->
-                <div class="lg:col-span-2 bg-surface-card rounded-xl border border-outline-variant shadow-sm flex flex-col">
-                    <div class="p-4 border-b border-outline-variant flex justify-between items-center">
-                        <h3 class="font-headline font-semibold text-lg">Appuntamenti del <span id="selected-date-label">...</span></h3>
+                <!-- Tabella Appuntamenti -->
+                <div class="lg:col-span-2 bg-white rounded-xl border border-gray-200 shadow-sm flex flex-col">
+                    <div class="p-4 border-b border-gray-200 flex justify-between items-center">
+                        <h3 class="font-bold text-lg">Appuntamenti del <span id="selected-date-text" class="capitalize"></span></h3>
                     </div>
                     <div class="overflow-x-auto flex-1">
-                        <table class="w-full text-left">
-                            <thead class="bg-surface-page text-xs uppercase text-on-surface-variant font-semibold">
+                        <table class="w-full text-left border-collapse">
+                            <thead class="bg-gray-50 text-xs uppercase text-gray-500 font-semibold">
                                 <tr>
                                     <th class="p-4">Orario</th>
                                     <th class="p-4">Cliente</th>
-                                    <th class="p-4 text-center">Stato</th>
+                                    <th class="p-4">Stato</th>
                                 </tr>
                             </thead>
-                            <tbody id="appointments-table-body" class="text-sm divide-y divide-outline-variant">
-                                <tr><td colspan="3" class="p-8 text-center text-on-surface-variant">Caricamento...</td></tr>
+                            <tbody id="app-table-body" class="text-sm divide-y divide-gray-100">
+                                <tr><td colspan="3" class="p-4 text-center text-gray-500">Caricamento...</td></tr>
                             </tbody>
                         </table>
                     </div>
@@ -169,131 +106,129 @@
     </main>
 
     <script>
-        // --- 1. SIDEBAR LOGIC ---
-        function toggleSidebar() {
+        // --- Variabili Globali ---
+        let currentYear = new Date().getFullYear();
+        let currentMonth = new Date().getMonth(); // 0-11
+        let selectedDateStr = new Date().toISOString().split('T')[0]; // YYYY-MM-DD locale sicuro
+        let appointments = [];
+
+        // --- Menu Mobile ---
+        function toggleMenu() {
             const sidebar = document.getElementById('sidebar');
             const overlay = document.getElementById('overlay');
-            
-            if (sidebar.classList.contains('sidebar-closed')) {
-                sidebar.classList.remove('sidebar-closed');
-                sidebar.classList.add('sidebar-open');
-                overlay.classList.remove('hidden');
-            } else {
-                sidebar.classList.remove('sidebar-open');
-                sidebar.classList.add('sidebar-closed');
+            if (sidebar.classList.contains('mobile-menu-open')) {
+                sidebar.classList.remove('mobile-menu-open');
                 overlay.classList.add('hidden');
+            } else {
+                sidebar.classList.add('mobile-menu-open');
+                overlay.classList.remove('hidden');
             }
         }
 
-        // --- 2. DATE LOGIC (FIXED TIMEZONE BUG) ---
-        let currentMonthDate = new Date();
-        let selectedDateStr = ""; // Stringa YYYY-MM-DD
-
-        function initDate() {
-            const now = new Date();
-            // Calcola la stringa data locale corretta (YYYY-MM-DD) senza fusi orari
-            const year = now.getFullYear();
-            const month = String(now.getMonth() + 1).padStart(2, '0');
-            const day = String(now.getDate()).padStart(2, '0');
-            selectedDateStr = `${year}-${month}-${day}`;
-            renderCalendar();
-        }
-
+        // --- Logica Calendario (Corretta per Fusi Orari) ---
         function renderCalendar() {
             const grid = document.getElementById('calendar-grid');
-            const label = document.getElementById('calendar-month-year');
-            const year = currentMonthDate.getFullYear();
-            const month = currentMonthDate.getMonth();
-
-            label.textContent = new Intl.DateTimeFormat('it-IT', { month: 'long', year: 'numeric' }).format(currentMonthDate);
+            const monthLabel = document.getElementById('month-year');
             grid.innerHTML = '';
 
-            // Primo giorno del mese
-            let firstDayIndex = new Date(year, month, 1).getDay();
-            firstDayIndex = firstDayIndex === 0 ? 6 : firstDayIndex - 1; // Lunedì = 0
+            const firstDayOfMonth = new Date(currentYear, currentMonth, 1);
+            const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
+            
+            // Aggiusta giorno della settimana (0=Dom -> 6, Lun=1 -> 0)
+            let startDay = firstDayOfMonth.getDay(); 
+            startDay = startDay === 0 ? 6 : startDay - 1;
 
-            const daysInMonth = new Date(year, month + 1, 0).getDate();
-            const todayStr = new Date().toISOString().split('T')[0];
+            const monthNames = ["gennaio", "febbraio", "marzo", "aprile", "maggio", "giugno", "luglio", "agosto", "settembre", "ottobre", "novembre", "dicembre"];
+            monthLabel.textContent = `${monthNames[currentMonth]} ${currentYear}`;
 
             // Spazi vuoti
-            for (let i = 0; i < firstDayIndex; i++) grid.innerHTML += '<div></div>';
+            for (let i = 0; i < startDay; i++) grid.innerHTML += '<div></div>';
 
             // Giorni
             for (let d = 1; d <= daysInMonth; d++) {
-                const mStr = String(month + 1).padStart(2, '0');
-                const dStr = String(d).padStart(2, '0');
-                const dateStr = `${year}-${mStr}-${dStr}`;
-
-                const isToday = dateStr === todayStr;
+                // Costruisci stringa data sicura YYYY-MM-DD senza fusi
+                const dateStr = `${currentYear}-${String(currentMonth + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+                
+                const isToday = dateStr === new Date().toISOString().split('T')[0];
                 const isSelected = dateStr === selectedDateStr;
-
-                let classes = "h-8 flex items-center justify-center rounded-lg cursor-pointer transition-colors relative ";
-                if (isSelected) classes += "bg-primary text-white font-bold shadow-md ";
-                else if (isToday) classes += "bg-surface-container-low text-primary font-bold border border-primary ";
-                else classes += "hover:bg-surface-container-low text-on-surface ";
+                
+                let classes = "h-8 w-8 flex items-center justify-center rounded-full mx-auto cursor-pointer ";
+                if (isSelected) classes += "bg-blue-600 text-white font-bold";
+                else if (isToday) classes += "bg-blue-100 text-blue-700 font-bold border border-blue-600";
+                else classes += "hover:bg-gray-100 text-gray-700";
 
                 grid.innerHTML += `<div class="${classes}" onclick="selectDate('${dateStr}')">${d}</div>`;
             }
-            
             loadAppointments();
         }
 
         function changeMonth(delta) {
-            currentMonthDate.setMonth(currentMonthDate.getMonth() + delta);
+            currentMonth += delta;
+            if (currentMonth > 11) { currentMonth = 0; currentYear++; }
+            if (currentMonth < 0) { currentMonth = 11; currentYear--; }
             renderCalendar();
         }
 
         function selectDate(dateStr) {
             selectedDateStr = dateStr;
-            renderCalendar();
+            renderCalendar(); // Ridisegna per aggiornare selezione
+            loadAppointments(); // Carica dati
         }
 
-        // --- 3. DATA FETCHING ---
+        // --- Caricamento Dati ---
         async function loadAppointments() {
-            const tbody = document.getElementById('appointments-table-body');
-            const statsTotal = document.getElementById('stat-total');
-            const statsConf = document.getElementById('stat-confirmed');
-            const dateLabel = document.getElementById('selected-date-label');
-
-            // Formatta etichetta data
+            const tbody = document.getElementById('app-table-body');
+            tbody.innerHTML = '<tr><td colspan="3" class="p-4 text-center">Caricamento...</td></tr>';
+            
+            // Aggiorna etichetta data
             const [y, m, d] = selectedDateStr.split('-');
             const dateObj = new Date(y, parseInt(m)-1, d);
-            dateLabel.textContent = dateObj.toLocaleDateString('it-IT', { weekday: 'long', day: 'numeric', month: 'long' });
+            const options = { weekday: 'long', day: 'numeric', month: 'long' };
+            document.getElementById('selected-date-text').textContent = dateObj.toLocaleDateString('it-IT', options);
 
             try {
+                // NOTA: Qui assumiamo che le colonne si chiamino 'time' e 'client_name'.
+                // Se il tuo DB ha nomi diversi, vedrai l'errore nei log.
                 const res = await fetch('/api/appointments');
-                const allData = await res.json();
+                if (!res.ok) throw new Error('Errore rete');
+                const data = await res.json();
                 
-                // Filtra per data selezionata
-                const daysApps = allData.filter(a => a.date === selectedDateStr);
-                
-                statsTotal.textContent = daysApps.length;
-                statsConf.textContent = daysApps.filter(a => a.status === 'confirmed').length;
+                // Filtra per la data selezionata
+                // Assicurati che nel DB la colonna data si chiami 'date'
+                const filtered = data.filter(app => app.date === selectedDateStr);
 
-                if (daysApps.length === 0) {
-                    tbody.innerHTML = `<tr><td colspan="3" class="p-8 text-center text-on-surface-variant">Nessun appuntamento per oggi.</td></tr>`;
+                if (filtered.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="3" class="p-4 text-center text-gray-500">Nessun appuntamento.</td></tr>';
                     return;
                 }
 
-                tbody.innerHTML = daysApps.sort((a,b) => a.time.localeCompare(b.time)).map(app => {
-                    const statusClass = app.status === 'confirmed' ? 'bg-status-confirmed-bg text-status-confirmed-text' : 'bg-status-pending-bg text-status-pending-text';
-                    const statusText = app.status === 'confirmed' ? 'Confermato' : 'In Attesa';
+                tbody.innerHTML = filtered.map(app => {
+                    // GESTIONE NOMI COLONNE DINAMICI
+                    // Se 'time' non esiste, prova 'appointment_time' o usa '--:--'
+                    const timeVal = app.time || app.appointment_time || '--:--';
+                    const nameVal = app.client_name || app.name || app.patient_name || 'Cliente';
+                    const statusVal = app.status || 'pending';
+                    
+                    let statusClass = statusVal === 'confirmed' ? 'bg-green-100 text-green-700' : 
+                                      statusVal === 'cancelled' ? 'bg-red-100 text-red-700' : 'bg-yellow-100 text-yellow-700';
+                    let statusText = statusVal === 'confirmed' ? 'Confermato' : statusVal === 'cancelled' ? 'Cancellato' : 'In Attesa';
+
                     return `
-                    <tr class="hover:bg-surface-container-low">
-                        <td class="p-4 font-medium">${app.time}</td>
-                        <td class="p-4 font-semibold">${app.client_name}</td>
-                        <td class="p-4 text-center"><span class="inline-block px-2 py-1 rounded text-xs font-bold uppercase ${statusClass}">${statusText}</span></td>
+                    <tr class="hover:bg-gray-50">
+                        <td class="p-4 font-medium">${timeVal}</td>
+                        <td class="p-4 font-semibold text-gray-900">${nameVal}</td>
+                        <td class="p-4"><span class="px-2 py-1 rounded text-xs font-bold uppercase ${statusClass}">${statusText}</span></td>
                     </tr>`;
                 }).join('');
 
             } catch (err) {
                 console.error(err);
-                tbody.innerHTML = `<tr><td colspan="3" class="p-4 text-center text-red-500">Errore caricamento dati API</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="3" class="p-4 text-center text-red-600">Errore: ${err.message}. Controlla i nomi delle colonne nel DB!</td></tr>`;
             }
         }
 
-        // Avvio
-        initDate();
+        // Init
+        renderCalendar();
     </script>
 </body>
 </html>
