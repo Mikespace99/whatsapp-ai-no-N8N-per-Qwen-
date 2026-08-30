@@ -4,270 +4,267 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard - AI Booking</title>
-    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Manrope:wght@600;700&display=swap" rel="stylesheet"/>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        "surface-page": "#f9fafb", "primary": "#006194", "on-primary": "#ffffff",
-                        "secondary-container": "#39b8fd", "on-secondary-container": "#004666",
-                        "surface-card": "#ffffff", "outline-variant": "#e5e7eb", "on-surface": "#151c27",
-                        "on-surface-variant": "#3f4850", "surface-container-low": "#f0f3ff",
-                        "status-confirmed-bg": "#f0fdf4", "status-confirmed-text": "#16a34a"
-                    },
-                    fontFamily: { body: ["Inter"], headline: ["Manrope"] }
-                }
-            }
-        }
-    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@0..1,100..700&display=swap" rel="stylesheet" />
     <style>
-        body { font-family: 'Inter', sans-serif; }
+        body { font-family: 'Inter', sans-serif; background-color: #f9fafb; color: #151c27; }
         h1, h2, h3 { font-family: 'Manrope', sans-serif; }
-        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
-        /* Sidebar Mobile Logic */
-        #sidebar { transition: transform 0.3s ease-in-out; }
-        .sidebar-open { transform: translateX(0) !important; }
-        .sidebar-closed { transform: translateX(-100%) !important; }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; vertical-align: middle; }
+        
+        /* Sidebar Styles */
+        .sidebar { transition: transform 0.3s ease-in-out; }
+        .sidebar-open { transform: translateX(0); }
+        .sidebar-closed { transform: translateX(-100%); }
+        
+        @media (min-width: 768px) {
+            .sidebar-closed { transform: translateX(0); position: relative; }
+            .mobile-overlay { display: none; }
+        }
     </style>
 </head>
-<body class="bg-surface-page text-on-surface flex h-screen overflow-hidden">
+<body class="flex h-screen overflow-hidden">
 
     <!-- Overlay Mobile -->
-    <div id="overlay" class="fixed inset-0 bg-black/50 z-30 hidden md:hidden" onclick="toggleSidebar()"></div>
+    <div id="overlay" class="fixed inset-0 bg-black/50 z-40 hidden md:hidden mobile-overlay" onclick="toggleSidebar()"></div>
 
     <!-- SIDEBAR -->
-    <aside id="sidebar" class="fixed md:relative z-40 h-full w-64 bg-white border-r border-outline-variant flex flex-col sidebar-closed md:translate-x-0 shadow-xl md:shadow-none">
-        <div class="h-16 flex items-center justify-between px-6 border-b border-outline-variant">
-            <div class="flex items-center gap-3">
-                <div class="w-8 h-8 bg-primary rounded-lg flex items-center justify-center text-white">
-                    <span class="material-symbols-outlined text-sm">smart_toy</span>
-                </div>
-                <span class="font-headline font-bold text-lg text-primary">AI Booking</span>
+    <aside id="sidebar" class="sidebar sidebar-closed fixed md:relative z-50 w-64 h-full bg-white border-r border-gray-200 flex flex-col shadow-lg md:shadow-none">
+        <!-- Logo -->
+        <div class="h-16 flex items-center px-6 border-b border-gray-200">
+            <div class="w-8 h-8 bg-blue-600 rounded flex items-center justify-center text-white mr-3">
+                <span class="material-symbols-outlined text-sm">smart_toy</span>
             </div>
-            <button class="md:hidden text-on-surface-variant" onclick="toggleSidebar()">
+            <span class="font-bold text-lg text-blue-600">AI Booking</span>
+            <!-- Close button mobile -->
+            <button class="md:hidden ml-auto text-gray-500" onclick="toggleSidebar()">
                 <span class="material-symbols-outlined">close</span>
             </button>
         </div>
 
+        <!-- Menu Links -->
         <nav class="flex-1 p-4 space-y-2 overflow-y-auto">
-            <a href="/dashboard" class="flex items-center gap-3 px-3 py-2.5 bg-surface-container-low text-primary rounded-lg font-medium">
+            <a href="/dashboard" class="flex items-center gap-3 px-3 py-2.5 bg-blue-50 text-blue-700 rounded-lg font-medium">
                 <span class="material-symbols-outlined">dashboard</span> Dashboard
             </a>
-            <a href="/agenda" class="flex items-center gap-3 px-3 py-2.5 text-on-surface-variant hover:bg-surface-container-low hover:text-primary rounded-lg font-medium transition-colors">
+            <a href="/agenda" class="flex items-center gap-3 px-3 py-2.5 text-gray-600 hover:bg-gray-50 hover:text-blue-600 rounded-lg font-medium transition-colors">
                 <span class="material-symbols-outlined">calendar_month</span> Agenda
             </a>
-            <a href="/configurazione" class="flex items-center gap-3 px-3 py-2.5 text-on-surface-variant hover:bg-surface-container-low hover:text-primary rounded-lg font-medium transition-colors">
+            <a href="/configurazione" class="flex items-center gap-3 px-3 py-2.5 text-gray-600 hover:bg-gray-50 hover:text-blue-600 rounded-lg font-medium transition-colors">
                 <span class="material-symbols-outlined">settings</span> Configurazione
             </a>
-            <a href="/statistiche" class="flex items-center gap-3 px-3 py-2.5 text-on-surface-variant hover:bg-surface-container-low hover:text-primary rounded-lg font-medium transition-colors">
+            <a href="/statistiche" class="flex items-center gap-3 px-3 py-2.5 text-gray-600 hover:bg-gray-50 hover:text-blue-600 rounded-lg font-medium transition-colors">
                 <span class="material-symbols-outlined">analytics</span> Statistiche
             </a>
         </nav>
 
-        <div class="p-4 border-t border-outline-variant">
-            <a href="/" class="flex items-center gap-3 px-3 py-2.5 text-error hover:bg-red-50 rounded-lg font-medium">
+        <!-- Footer -->
+        <div class="p-4 border-t border-gray-200">
+            <a href="/" class="flex items-center gap-3 px-3 py-2.5 text-red-600 hover:bg-red-50 rounded-lg font-medium">
                 <span class="material-symbols-outlined">logout</span> Esci
             </a>
         </div>
     </aside>
 
-    <!-- MAIN CONTENT -->
-    <main class="flex-1 flex flex-col h-full overflow-hidden">
-        <!-- Topbar -->
-        <header class="h-16 bg-white border-b border-outline-variant flex items-center justify-between px-4 md:px-8 shrink-0">
+    <!-- Main Content -->
+    <main class="flex-1 flex flex-col h-full overflow-hidden relative">
+        <!-- Top Header -->
+        <header class="h-16 bg-white border-b border-gray-200 flex items-center justify-between px-4 md:px-8 shrink-0">
             <div class="flex items-center gap-4">
-                <button class="md:hidden text-on-surface-variant" onclick="toggleSidebar()">
+                <!-- Hamburger Button (Visible only on mobile) -->
+                <button class="md:hidden text-gray-600" onclick="toggleSidebar()">
                     <span class="material-symbols-outlined">menu</span>
                 </button>
-                <h1 class="font-headline text-xl font-bold text-on-surface hidden md:block">Benvenuto, Dottore</h1>
+                <h1 class="font-bold text-xl text-gray-800">Benvenuto, Dottore</h1>
             </div>
             <div class="flex items-center gap-3">
                 <div class="text-right hidden sm:block">
-                    <p class="text-sm font-semibold text-on-surface">Dott. Rossi</p>
-                    <p class="text-xs text-on-surface-variant">Specialista</p>
+                    <p class="text-sm font-semibold text-gray-800">Dott. Rossi</p>
+                    <p class="text-xs text-gray-500">Specialista</p>
                 </div>
-                <div class="w-10 h-10 rounded-full bg-surface-container-low flex items-center justify-center text-primary font-bold border border-outline-variant">DR</div>
+                <div class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-700 font-bold border border-blue-200">
+                    DR
+                </div>
             </div>
         </header>
 
         <!-- Scrollable Area -->
         <div class="flex-1 overflow-y-auto p-4 md:p-8">
-            <div class="md:hidden mb-6">
-                <h1 class="font-headline text-2xl font-bold text-on-surface">Benvenuto, Dottore</h1>
-                <p class="text-on-surface-variant mt-1">Panoramica attività.</p>
-            </div>
-
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                <!-- Calendar -->
+            <div class="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-6">
+                
+                <!-- Left Col: Calendar -->
                 <div class="lg:col-span-1 space-y-6">
-                    <div class="bg-surface-card rounded-xl border border-outline-variant p-4 shadow-sm">
+                    <div class="bg-white rounded-xl border border-gray-200 p-4 shadow-sm">
                         <div class="flex justify-between items-center mb-4">
-                            <h3 class="font-headline font-semibold text-lg" id="cal-month-year">...</h3>
+                            <h3 class="font-bold text-lg" id="month-label">Mese Anno</h3>
                             <div class="flex gap-1">
-                                <button onclick="changeMonth(-1)" class="p-1 hover:bg-surface-container-low rounded-full"><span class="material-symbols-outlined text-sm">chevron_left</span></button>
-                                <button onclick="changeMonth(1)" class="p-1 hover:bg-surface-container-low rounded-full"><span class="material-symbols-outlined text-sm">chevron_right</span></button>
+                                <button onclick="prevMonth()" class="p-1 hover:bg-gray-100 rounded"><span class="material-symbols-outlined text-sm">chevron_left</span></button>
+                                <button onclick="nextMonth()" class="p-1 hover:bg-gray-100 rounded"><span class="material-symbols-outlined text-sm">chevron_right</span></button>
                             </div>
                         </div>
-                        <div class="grid grid-cols-7 text-center text-xs font-medium text-on-surface-variant mb-2">
+                        <div class="grid grid-cols-7 text-center text-xs font-medium text-gray-500 mb-2">
                             <div>Lun</div><div>Mar</div><div>Mer</div><div>Gio</div><div>Ven</div><div>Sab</div><div>Dom</div>
                         </div>
-                        <div id="cal-grid" class="grid grid-cols-7 gap-1 text-center text-sm"></div>
+                        <div id="calendar-grid" class="grid grid-cols-7 gap-1 text-center text-sm"></div>
                     </div>
-                    
-                    <!-- Stats Mini -->
-                    <div class="bg-surface-card rounded-xl border border-outline-variant p-4 shadow-sm">
-                        <h3 class="font-headline font-semibold text-lg mb-3">Riepilogo Giorno</h3>
-                        <div class="flex justify-between items-center mb-2">
-                            <span class="text-sm text-on-surface-variant">Totale</span>
-                            <span class="font-bold text-lg" id="stat-total">-</span>
-                        </div>
-                        <div class="flex justify-between items-center">
-                            <span class="text-sm text-on-surface-variant">Confermati</span>
-                            <span class="font-bold text-status-confirmed-text" id="stat-conf">-</span>
+
+                    <!-- Stats Card -->
+                    <div class="bg-white rounded-xl border border-gray-200 p-4 shadow-sm">
+                        <h3 class="font-bold text-lg mb-4">Riepilogo Giorno</h3>
+                        <div class="space-y-3">
+                            <div class="flex justify-between">
+                                <span class="text-gray-500 text-sm">Totale</span>
+                                <span class="font-bold text-lg" id="stat-total">0</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-500 text-sm">Confermati</span>
+                                <span class="font-bold text-green-600" id="stat-conf">0</span>
+                            </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Table -->
-                <div class="lg:col-span-2 bg-surface-card rounded-xl border border-outline-variant shadow-sm flex flex-col">
-                    <div class="p-4 border-b border-outline-variant flex justify-between items-center">
-                        <h3 class="font-headline font-semibold text-lg">Appuntamenti del <span id="selected-date-text">...</span></h3>
+                <!-- Right Col: Table -->
+                <div class="lg:col-span-2 bg-white rounded-xl border border-gray-200 shadow-sm flex flex-col">
+                    <div class="p-4 border-b border-gray-200 flex justify-between items-center">
+                        <h3 class="font-bold text-lg">Appuntamenti del <span id="selected-date-text">...</span></h3>
                     </div>
                     <div class="overflow-x-auto flex-1">
                         <table class="w-full text-left border-collapse">
-                            <thead class="bg-surface-page text-xs uppercase text-on-surface-variant font-semibold">
+                            <thead class="bg-gray-50 text-xs uppercase text-gray-500 font-semibold">
                                 <tr>
                                     <th class="p-4">Orario</th>
                                     <th class="p-4">Cliente</th>
-                                    <th class="p-4 hidden sm:table-cell">Servizio</th>
+                                    <th class="p-4">Servizio</th>
                                     <th class="p-4 text-center">Stato</th>
                                 </tr>
                             </thead>
-                            <tbody id="app-table-body" class="text-sm divide-y divide-outline-variant">
-                                <tr><td colspan="4" class="p-8 text-center text-on-surface-variant">Caricamento...</td></tr>
+                            <tbody id="app-table-body" class="text-sm divide-y divide-gray-100">
+                                <tr><td colspan="4" class="p-8 text-center text-gray-500">Caricamento...</td></tr>
                             </tbody>
                         </table>
                     </div>
                 </div>
+
             </div>
         </div>
     </main>
 
     <script>
-        // --- LOGICA SIDEBAR ---
+        // --- Sidebar Logic ---
         function toggleSidebar() {
             const sb = document.getElementById('sidebar');
             const ov = document.getElementById('overlay');
             if (sb.classList.contains('sidebar-closed')) {
-                sb.classList.remove('sidebar-closed'); sb.classList.add('sidebar-open');
+                sb.classList.remove('sidebar-closed');
+                sb.classList.add('sidebar-open');
                 ov.classList.remove('hidden');
             } else {
-                sb.classList.remove('sidebar-open'); sb.classList.add('sidebar-closed');
+                sb.classList.remove('sidebar-open');
+                sb.classList.add('sidebar-closed');
                 ov.classList.add('hidden');
             }
         }
 
-        // --- LOGICA CALENDARIO & DATI ---
-        let currentDate = new Date();
-        let selectedDateStr = new Date().toISOString().split('T')[0];
-        let allApps = [];
+        // --- Calendar & Data Logic ---
+        let currentViewDate = new Date();
+        let selectedDate = new Date();
+        let appointments = [];
 
-        async function fetchData() {
+        async function loadData() {
             try {
                 const res = await fetch('/api/appointments');
-                if(!res.ok) throw new Error('Errore rete');
-                allApps = await res.json();
+                if (!res.ok) throw new Error('Network error');
+                appointments = await res.json();
                 renderCalendar();
-            } catch(e) {
-                console.error(e);
-                document.getElementById('app-table-body').innerHTML = `<tr><td colspan="4" class="p-4 text-center text-red-500">Errore caricamento dati. Controlla i log di Render e le colonne DB.</td></tr>`;
+                renderTable();
+            } catch (err) {
+                console.error("Errore caricamento:", err);
+                document.getElementById('app-table-body').innerHTML = '<tr><td colspan="4" class="p-4 text-red-500">Errore nel recupero dati. Controlla i log.</td></tr>';
             }
         }
 
         function renderCalendar() {
-            const grid = document.getElementById('cal-grid');
-            const title = document.getElementById('cal-month-year');
-            const year = currentDate.getFullYear();
-            const month = currentDate.getMonth();
-            
-            title.textContent = new Intl.DateTimeFormat('it-IT', { month: 'long', year: 'numeric' }).format(currentDate);
+            const grid = document.getElementById('calendar-grid');
+            const label = document.getElementById('month-label');
+            const year = currentViewDate.getFullYear();
+            const month = currentViewDate.getMonth();
+
+            label.textContent = new Intl.DateTimeFormat('it-IT', { month: 'long', year: 'numeric' }).format(currentViewDate);
             grid.innerHTML = '';
 
-            // Calcolo giorni corretti senza bug fuso orario
-            const firstDayIndex = new Date(year, month, 1).getDay(); // 0=Dom
-            const adjustedFirstDay = firstDayIndex === 0 ? 6 : firstDayIndex - 1; // 0=Lun
+            const firstDay = new Date(year, month, 1).getDay(); // 0=Sun
+            const offset = firstDay === 0 ? 6 : firstDay - 1; // Make Monday 0
             const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+            // Empty slots
+            for(let i=0; i<offset; i++) grid.innerHTML += '<div></div>';
+
+            // Days
             const todayStr = new Date().toISOString().split('T')[0];
-
-            // Spazi vuoti
-            for(let i=0; i<adjustedFirstDay; i++) grid.innerHTML += '<div></div>';
-
-            // Giorni
+            
             for(let d=1; d<=daysInMonth; d++) {
-                // Costruzione stringa data sicura YYYY-MM-DD
-                const dayStr = String(d).padStart(2, '0');
-                const monthStr = String(month + 1).padStart(2, '0');
-                const dateStr = `${year}-${monthStr}-${dayStr}`;
-
+                const dateStr = `${year}-${String(month+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
                 const isToday = dateStr === todayStr;
-                const isSelected = dateStr === selectedDateStr;
+                const isSelected = dateStr === selectedDate.toISOString().split('T')[0];
                 
-                let cls = "h-8 flex items-center justify-center rounded-lg cursor-pointer transition-colors relative ";
-                if(isSelected) cls += "bg-primary text-white font-bold shadow-md ";
-                else if(isToday) cls += "bg-surface-container-low text-primary font-bold border border-primary ";
-                else cls += "hover:bg-surface-container-low text-on-surface ";
+                let cls = "h-8 flex items-center justify-center rounded cursor-pointer ";
+                if(isSelected) cls += "bg-blue-600 text-white font-bold ";
+                else if(isToday) cls += "bg-blue-50 text-blue-700 font-bold border border-blue-200 ";
+                else cls += "hover:bg-gray-100 text-gray-700 ";
 
-                // Badge se ci sono appuntamenti
-                const count = allApps.filter(a => a.date === dateStr).length;
-                const badge = (count > 0 && !isSelected) ? `<span class="absolute bottom-1 w-1.5 h-1.5 bg-blue-400 rounded-full"></span>` : '';
-
-                grid.innerHTML += `<div class="${cls}" onclick="selectDate('${dateStr}')">${d}${badge}</div>`;
+                grid.innerHTML += `<div class="${cls}" onclick="selectDate('${dateStr}')">${d}</div>`;
             }
-            updateView();
-        }
-
-        function changeMonth(delta) {
-            currentDate.setMonth(currentDate.getMonth() + delta);
-            renderCalendar();
+            updateStats();
         }
 
         function selectDate(dateStr) {
-            selectedDateStr = dateStr;
+            selectedDate = new Date(dateStr + 'T12:00:00'); // Fix timezone shift
             renderCalendar();
+            renderTable();
         }
 
-        function updateView() {
-            // Stats
-            const daysApps = allApps.filter(a => a.date === selectedDateStr);
-            document.getElementById('stat-total').textContent = daysApps.length;
-            document.getElementById('stat-conf').textContent = daysApps.filter(a => a.status === 'confirmed').length;
-            
-            // Label Data
-            const [y, m, d] = selectedDateStr.split('-');
-            const dateObj = new Date(y, parseInt(m)-1, d);
-            document.getElementById('selected-date-text').textContent = dateObj.toLocaleDateString('it-IT', { weekday: 'long', day: 'numeric', month: 'long' });
+        function prevMonth() { currentViewDate.setMonth(currentViewDate.getMonth()-1); renderCalendar(); }
+        function nextMonth() { currentViewDate.setMonth(currentViewDate.getMonth()+1); renderCalendar(); }
 
-            // Tabella
+        function updateStats() {
+            const dStr = selectedDate.toISOString().split('T')[0];
+            const dayApps = appointments.filter(a => a.date && a.date.startsWith(dStr));
+            document.getElementById('stat-total').innerText = dayApps.length;
+            document.getElementById('stat-conf').innerText = dayApps.length; // Assuming all fetched are confirmed for now
+            
+            const opts = { weekday: 'long', day: 'numeric', month: 'long' };
+            document.getElementById('selected-date-text').innerText = selectedDate.toLocaleDateString('it-IT', opts);
+        }
+
+        function renderTable() {
             const tbody = document.getElementById('app-table-body');
-            if(daysApps.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="4" class="p-8 text-center text-on-surface-variant">Nessun appuntamento.</td></tr>`;
+            const dStr = selectedDate.toISOString().split('T')[0];
+            const dayApps = appointments.filter(a => a.date && a.date.startsWith(dStr));
+
+            if(dayApps.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="4" class="p-8 text-center text-gray-500">Nessun appuntamento.</td></tr>';
                 return;
             }
-            
-            tbody.innerHTML = daysApps.sort((a,b) => a.time.localeCompare(b.time)).map(app => `
-                <tr class="hover:bg-surface-container-low transition-colors">
-                    <td class="p-4 font-medium">${app.time}</td>
-                    <td class="p-4 font-semibold text-on-surface">${app.client_name || 'Sconosciuto'}</td>
-                    <td class="p-4 text-on-surface-variant hidden sm:table-cell">${app.service || '-'}</td>
-                    <td class="p-4 text-center"><span class="inline-flex px-2 py-1 rounded text-xs font-bold uppercase bg-status-confirmed-bg text-status-confirmed-text">Confermato</span></td>
-                </tr>
-            `).join('');
+
+            tbody.innerHTML = dayApps.map(a => {
+                // Mappa colonne Supabase: start_time, name, service
+                const time = a.start_time || '--:--';
+                const name = a.name || 'Sconosciuto';
+                const service = a.service || '-';
+                
+                return `
+                <tr class="hover:bg-gray-50">
+                    <td class="p-4 font-medium">${time}</td>
+                    <td class="p-4 font-semibold text-gray-800">${name}</td>
+                    <td class="p-4 text-gray-600">${service}</td>
+                    <td class="p-4 text-center"><span class="inline-block px-2 py-1 rounded text-xs font-bold bg-green-100 text-green-700 uppercase">Confermato</span></td>
+                </tr>`;
+            }).join('');
         }
 
-        fetchData();
+        // Init
+        loadData();
     </script>
 </body>
 </html>
